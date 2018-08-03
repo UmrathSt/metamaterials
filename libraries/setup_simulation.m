@@ -56,4 +56,12 @@ for i = 1:3;
 end;
 %fprintf(['Using the following boundary conditions: ' mat2str(BC) '\n']);
 FDTD = SetBoundaryCond(FDTD, BC);
+CSX = InitCSX();
+[CSX, matstring] = defineCSXMaterials(CSX, sim_setup.used_materials);
+[CSX, geomstring, to_be_meshed] = AddLayers(CSX, sim_setup.used_layers, 0);
+runtime = strftime ("%r (%Z) %A %e %B %Y", localtime (time ()));
+retval = horzcat(['# openEMS run on machine: ' uname.nodename ' at ' runtime '\n'],matstring, geomstring);
+% definePorts
+% defineDumps
+% CreateMesh
 end
