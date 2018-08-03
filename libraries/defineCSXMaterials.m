@@ -20,7 +20,16 @@ for i = 1:length(materials);
         Error("Possible types of material are mat.Type = \'Material\'  or mat.Type = \'ConductingSheet\'");
     end;
     % raise an error, if its neither a Material nor a ConductingSheet
-    if strcmp(mtype, 'Material') && ~CheckMaterialNameExistent(CSX.Properties.Material, mName);
+    material_exists = 0;
+    try;
+        material_exists = CheckMaterialNameExistent(CSX.Properties.Material, mName);
+        catch lasterror;
+    end;
+   try;
+        material_exists = CheckMaterialNameExistent(CSX.Properties.ConductingSheet, mName);
+        catch lasterror;
+    end;
+    if strcmp(mtype, 'Material') && ~material_exists;
         if strcmp(mtype, 'Material'); 
             % Material does not yet exist
             CSX = AddMaterial(CSX, mName);
@@ -32,7 +41,7 @@ for i = 1:length(materials);
             matstring = horzcat(matstring, '\n');
         end;
         
-    elseif strcmp(mtype, 'ConductingSheet') && ~CheckMaterialNameExistent(CSX.Properties.ConductingSheet, mName); 
+    elseif strcmp(mtype, 'ConductingSheet') && ~ material_exists;
         % ConductingSheet does not yet exist
         matstring = horzcat(matstring, ['# ConductingSheet named ' mName ' with properties: ']);
         sheetThickness = mat.Properties.Thickness;
