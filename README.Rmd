@@ -1,2 +1,4 @@
 # metamaterials
-<script type="math/tex; mode=display">\frac{\bar{Y} - \mu}{\sigma_Y/\sqrt{N}}</script>
+Some Octave/Matlab scripts for the convenient definition of 
+matamaterial unit-cells and the computation of their scattering
+propterties with the FDTD solver openEMS
