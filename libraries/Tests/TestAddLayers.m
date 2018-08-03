@@ -17,7 +17,7 @@ mFR4.Properties.Epsilon = 4.6;
 materials{1} = mCu;
 materials{2} = mFR4;
 
-[CSX, matstr] = defineCSXMaterials(CSX, materials);
+[CSX, matstring] = defineCSXMaterials(CSX, materials);
 
 oBackPlane.Name = 'CopperBackplane';
 oBackPlane.MName = 'Cu';
@@ -57,6 +57,7 @@ fprintf(["it seems that everything worked. \nCheck the \'CSX\' structure, \'geom
 fprintf('--- Output ---\n');
 fprintf('The geometry you specified leads to the following string:\n');
 fprintf(geomstring);
+fprintf(matstring);
 
 
 
