@@ -61,7 +61,9 @@ CSX = InitCSX();
 [CSX, geomstring, to_be_meshed] = AddLayers(CSX, sim_setup.used_layers, 0);
 runtime = strftime ("%r (%Z) %A %e %B %Y", localtime (time ()));
 retval = horzcat(['# openEMS run on machine: ' uname.nodename ' at ' runtime '\n'],matstring, geomstring);
+% CreateMesh
 % definePorts
 % defineDumps
-% CreateMesh
+% WriteCSX
+% RunOpenEMS
 end
