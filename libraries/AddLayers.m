@@ -11,7 +11,7 @@ function [CSX, geomstr, to_be_meshed] = AddLayers(CSX, layers, startz)
 % layer1{1}.Bstop  = [10, 10, layer1{1}.Thickness];
 to_be_meshed = [];
 layerNo = length(layers);
-geomstr = ['# Stacking a total of ' num2str(layerNo) ' layers.\n'];
+geomstr = ['# Stacking a total of ' num2str(layerNo) ' layer(s).\n'];
 for i = 1:layerNo; % loop over layers
     lay = layers{i};
     objectNo = length(lay.objects);
@@ -50,9 +50,9 @@ for i = 1:layerNo; % loop over layers
                                 mat2str(start) ', ' mat2str(stop) ' made of material ' ob.MName '\n']);   
         elseif strcmp(ob.Type, 'Polygon');
             CSX = AddLinPoly(CSX, ob.MName, ob.Prio, 2, ob.Thickness/2, ...
-                             -ob.Thickness/2, 'Transform', Trafo);
-            geomstr = horzcat(geomstr, ['# Polygon with nodes (x, y) =' ...
-                        mat2str(ob.points) ' made of material ' ob.MName '\n']);  
+                             ob.Points, -ob.Thickness/2, 'Transform', Trafo);
+            geomstr = horzcat(geomstr, ['# Polygon with nodes (x, y) = ' ...
+                        mat2str(ob.Points) ' made of material ' ob.MName '\n']);  
         else error(["Unknown object type " ob.Type]);
 
     end;
