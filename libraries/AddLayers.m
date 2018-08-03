@@ -53,13 +53,14 @@ for i = 1:layerNo; % loop over layers
                                 mat2str(start) ', ' mat2str(stop) ' made of material ' ob.MName '\n']);   
             geomstr = horzcat(geomstr, trafostr);
         elseif strcmp(ob.Type, 'Polygon');
-            CSX = AddLinPoly(CSX, ob.MName, ob.Prio, 2, ob.Thickness/2, ...
-                             ob.Points, -ob.Thickness/2, 'Transform', Trafo);
+            CSX = AddLinPoly(CSX, ob.MName, ob.Prio, 2, 0, ...
+                             ob.Points, ob.Thickness, 'Transform', Trafo);
             geomstr = horzcat(geomstr, ['# Polygon with nodes (x, y) = ' ...
-                        mat2str(ob.Points) ' made of material ' ob.MName '\n']);  
+                        mat2str(ob.Points) ' made of material ' ob.MName ' at z = ' num2str(startz)  '...' ...
+                                                        num2str(startz+ob.Thickness) '.\n']);  
             geomstr = horzcat(geomstr, trafostr);
         else error(["Unknown object type " ob.Type]);
     end;
-    
+    startz = startz + lay.Thickness;
 end;
 end

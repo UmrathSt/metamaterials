@@ -22,7 +22,7 @@ materials{2} = mFR4;
 oBackPlane.Name = 'CopperBackplane';
 oBackPlane.MName = 'Cu';
 oBackPlane.Type = 'Box';
-oBackPlane.Thickness = 1;
+oBackPlane.Thickness = 0.05;
 oBackPlane.Bstart = [-10, -10, 0];
 oBackPlane.Bstop =  [+10, +10, 0.05];
 oBackPlane.Prio = 1;
@@ -39,13 +39,15 @@ oFSSBackground.Type = 'Box';
 oFSSBackground.Thickness = 1;
 oFSSBackground.Prio = 1;
 oFSSBackground.Bstart = [-10, -10, 0];
-oFSSBackground.Bstop =  [+10, +10, 1];
+oFSSBackground.Bstop =  [+10, +10, oFSSBackground.Thickness];
 
 
 
 layer1.Name = 'SolidCuLayer';
 layer1.objects{1} = oBackPlane;
+layer1.Thickness = oBackPlane.Thickness;
 layer2.Name = 'FSSlayer';
+layer2.Thickness = oPoly.Thickness;
 layer2.objects{1} = oPoly;
 layer2.objects{2} = oFSSBackground;
 layers{1} = layer1;
