@@ -32,6 +32,7 @@ oPoly.Type = 'Polygon';
 oPoly.Thickness = 1;
 oPoly.Points = [[0;1],[1;1],[1;0]];
 oPoly.Prio = 1;
+oPoly.Transform = {'Rotate_Z', pi};
 oFSSBackground.Name = 'FR4Background';
 oFSSBackground.MName = 'FR4';
 oFSSBackground.Type = 'Box';
