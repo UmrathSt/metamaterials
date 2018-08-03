@@ -1,4 +1,4 @@
-function [retval] = setup_simulation(simulation_setup)
+function [retval] = setup_simulation(sim_setup)
 % Take the structure simulation_setup and create the simulation files 
 % for simulation_setup{1} to simulation_setup{end} in the folder
 % if simulation_setup{i}.Paths.SimPath = ',,,/folder.../'
@@ -20,5 +20,40 @@ function [retval] = setup_simulation(simulation_setup)
 % simulation_setup.FDTD.EndCriteria = 1e-6;
 % simulation_setup.FDTD.Polarization = [1,0,0];
 % simulation_setup.FDTD.Kinc = [0,0,-1];
-FDTD = InitFDTD('EndCriteria', UC.EndCriteria);
-FDTD = SetGaussExcite(FDTD, 0.5*(UC.f_start+UC.f_stop),0.5*(UC.f_stop-UC.f_start));
+retval = 'None';
+sFDTD = sim_setup.FDTD;
+sPP = sim_setup.PP;
+sGeom = sim_setup.Geometry;
+FDTD = InitFDTD('EndCriteria', sFDTD.EndCriteria);
+FDTD = SetGaussExcite(FDTD, 0.5*(sFDTD.fstart+sFDTD.fstop),0.5*(sFDTD.fstop-sFDTD.fstart));
+if ~all(sFDTD.Kinc == [0, 0, -1]);
+    error('Currently only perpendicular incidence and propagation in -z direction is implemented via boundary conditions');
+end;
+hpol =  abs(cross(sFDTD.Kinc, sFDTD.Polarization));
+BC = ones(1,6)*10;
+if norm(sFDTD.Polarization) > 1;
+    error(['Polarization is to be normalized and must be in either 0 or 1 direction. Given: ' ...
+                        mat2str(sFDTD.Polarization)]);
+end;
+
+for i = 1:3;
+    if sFDTD.Polarization(i);
+        BC(2*i) = 0;
+        BC(2*i-1) = 0;
+    end;
+    if sFDTD.Kinc(i);
+        BC(2*i) = 3;
+        if strcmp(sGeom.grounded, 'True');
+            BC(2*i-1) = 0;
+        elseif strcmp(sGeom.grounded, 'False');
+            BC(2*i-1) = 3;
+        end;
+    end;
+    if hpol(i);
+        BC(2*i) = 1;
+        BC(2*i-1) = 1;
+    end;
+end;
+%fprintf(['Using the following boundary conditions: ' mat2str(BC) '\n']);
+FDTD = SetBoundaryCond(FDTD, BC);
+end
