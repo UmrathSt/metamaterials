@@ -1,5 +1,5 @@
-#libraries
+# libraries
 Libraries which provide convenient funcionality for
 stacked metamaterial structures
-##Tests
+## Tests
 Some scripts for testing purposes of the Matlab scripts
