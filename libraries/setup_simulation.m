@@ -24,7 +24,10 @@ retval = 'None';
 sFDTD = sim_setup.FDTD;
 sPP = sim_setup.PP;
 sPP.grounded = sFDTD.Geometry.grounded;
+sPP.Polarization = sFDTD.Polarization;
+sPP.Kinc = sFDTD.Kinc;
 sGeom = sim_setup.Geometry;
+sPP.Unit = sGeom.Unit;
 FDTD = InitFDTD('EndCriteria', sFDTD.EndCriteria);
 fc = 0.5*(sFDTD.fstart+sFDTD.fstop);
 fw = 0.5*(sFDTD.fstop-sFDTD.fstart);
@@ -67,6 +70,7 @@ FDTD = SetBoundaryCond(FDTD, BC);
 CSX = InitCSX();
 [CSX, matstring] = defineCSXMaterials(CSX, sim_setup.used_materials);
 [CSX, geomstring, tbm] = AddLayers(CSX, sim_setup.used_layers, 0);
+sPP.TotalThickness = tbm.TotalThickness;
 runtime = strftime ("%r (%Z) %A %e %B %Y", localtime (time ()));
 setupstr = ['# openEMS run on machine: ' uname.nodename ' at ' runtime '\n'];
 setupstr = horzcat(setupstr, ['# Simulation parameters: Gauss-pulse with fc = '...
@@ -80,7 +84,7 @@ retval = horzcat(setupstr,matstring, geomstring);
 % CreateMesh
 mesh = CreateMyFDTDMesh(CSX, sGeom, tbm);
 % definePorts
-[CSX, Port] = definePorts(CSX, mesh, sPP);
+[CSX, Port, sPP] = definePorts(CSX, mesh, sPP);
 % defineDumps
 % WriteCSX
 % RunOpenEMS
