@@ -10,6 +10,7 @@ sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.Geometry.grounded = 'False';
 sim_setup.Geometry.MeshResolution = 20;
 sim_setup.Geometry.Unit = 1e-3;
+sim_setup.Geometry.UCDim = [10, 10]; % size of the unit-cell in the xy-plane
 sim_setup.PP = [];
 % Define the materials which are used:
 mCu.Name = 'Cu';
@@ -47,7 +48,7 @@ oFR4Slab.Type = 'Box';
 oFR4Slab.Thickness = 1;
 oFR4Slab.Prio = 1;
 oFR4Slab.Bstart = [-10, -10, 0];
-oFR4Slab.Bstop =  [+10, +10, oFSS.Thickness];
+oFR4Slab.Bstop =  [+10, +10, oFR4Slab.Thickness];
 
 layer1.Name = 'CuBackPlane';
 layer1.objects{1} = oCuSlab;

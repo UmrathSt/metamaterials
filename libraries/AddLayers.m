@@ -9,13 +9,22 @@ function [CSX, geomstr, to_be_meshed] = AddLayers(CSX, layers, startz)
 % layer1{1}.Thickness = 1;
 % layer1{1}.Bstart = [-10, -10, 0];
 % layer1{1}.Bstop  = [10, 10, layer1{1}.Thickness];
-to_be_meshed = [];
+to_be_meshed.x = [];
+to_be_meshed.y = [];
+to_be_meshed.z = [0];
+to_be_meshed.TotalThickness = 0;
 layerNo = length(layers);
 geomstr = ['# Stacking a total of ' num2str(layerNo) ' layer(s).\n'];
 for i = 1:layerNo; % loop over layers
     lay = layers{i};
+    
     objectNo = length(lay.objects);
-    geomstr = horzcat(geomstr, ["# Found " num2str(objectNo) " object(s) in layer \'" lay.Name "'\:\n"]);
+    geomstr = horzcat(geomstr, ["# Found " num2str(objectNo) " object(s) in layer " ...
+            num2str(i) " called \'" lay.Name "'\:\n"]);
+    geomstr = horzcat(geomstr, ["# thickness of layer " num2str(i) " is "...
+                     num2str(lay.Thickness) "\n" ]);
+    to_be_meshed.z = horzcat(to_be_meshed.z, to_be_meshed.z(end)+lay.Thickness);
+    to_be_meshed.TotalThickness = to_be_meshed.TotalThickness + lay.Thickness;
     trafostr = '';
     % set the minimum z-position of the current layer
     for j = 1:length(lay.objects) % loop over objects in each layer
