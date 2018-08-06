@@ -8,6 +8,8 @@ sim_setup.FDTD.EndCriteria = 1e-6;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.Geometry.grounded = 'False';
+sim_setup.Geometry.MeshResolution = 20;
+sim_setup.Geometry.Unit = 1e-3;
 sim_setup.PP = [];
 % Define the materials which are used:
 mCu.Name = 'Cu';

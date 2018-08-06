@@ -35,7 +35,17 @@ for i = 1:length(materials);
             CSX = AddMaterial(CSX, mName);
             matstring = horzcat(matstring, ['# Material named ' mName ' with properties: ']);
             for [val, key] = mat.Properties;
-                matstring = horzcat(matstring, [key ' = '  num2str(val) ', ']);
+                prop_unit = '';
+                if strcmp(key, 'Kappa');
+                    prop_unit = ' S/m';
+                end;
+                if val > 1e3;
+                    matstring = horzcat(matstring, [key ' = '  num2str(val, '%.2e') ...
+                    prop_unit ', ']);
+                else;
+                    matstring = horzcat(matstring, [key ' = '  num2str(val) ...
+                    prop_unit ', ']);
+                end;
                 CSX = SetMaterialProperty(CSX, mat.Name, key, val);
             end;
             matstring = horzcat(matstring, '\n');
@@ -46,7 +56,8 @@ for i = 1:length(materials);
         matstring = horzcat(matstring, ['# ConductingSheet named ' mName ' with properties: ']);
         sheetThickness = mat.Properties.Thickness;
         sheetKappa = mat.Properties.Kappa;
-        matstring = horzcat(matstring, ['Thickness = ' num2str(sheetThickness) ', Kappa = ' num2str(sheetKappa) '\n']);
+        matstring = horzcat(matstring, ['Thickness = ' num2str(sheetThickness, '%.2e')...
+        ' m, Kappa = ' num2str(sheetKappa, '%.2e') ' S/m\n']);
         CSX = AddConductingSheet(CSX, mName, sheetKappa, sheetThickness);
     end;
 end

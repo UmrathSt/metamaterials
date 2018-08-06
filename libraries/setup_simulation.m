@@ -25,7 +25,10 @@ sFDTD = sim_setup.FDTD;
 sPP = sim_setup.PP;
 sGeom = sim_setup.Geometry;
 FDTD = InitFDTD('EndCriteria', sFDTD.EndCriteria);
-FDTD = SetGaussExcite(FDTD, 0.5*(sFDTD.fstart+sFDTD.fstop),0.5*(sFDTD.fstop-sFDTD.fstart));
+fc = 0.5*(sFDTD.fstart+sFDTD.fstop);
+fw = 0.5*(sFDTD.fstop-sFDTD.fstart);
+FDTD = SetGaussExcite(FDTD, fc, fw);
+maxres = 3e8/sGeom.MeshResolution/sGeom.Unit;
 if ~all(sFDTD.Kinc == [0, 0, -1]);
     error('Currently only perpendicular incidence and propagation in -z direction is implemented via boundary conditions');
 end;
@@ -60,7 +63,15 @@ CSX = InitCSX();
 [CSX, matstring] = defineCSXMaterials(CSX, sim_setup.used_materials);
 [CSX, geomstring, to_be_meshed] = AddLayers(CSX, sim_setup.used_layers, 0);
 runtime = strftime ("%r (%Z) %A %e %B %Y", localtime (time ()));
-retval = horzcat(['# openEMS run on machine: ' uname.nodename ' at ' runtime '\n'],matstring, geomstring);
+setupstr = ['# openEMS run on machine: ' uname.nodename ' at ' runtime '\n'];
+setupstr = horzcat(setupstr, ['# Simulation parameters: Gauss-pulse with fc = '...
+             num2str(fc/1e9) ' GHz, fw = ' num2str(fw/1e9) ' GHz, EndCriteria = ' ...
+             num2str(sFDTD.EndCriteria) '\n']);
+setupstr = horzcat(setupstr, ['# Mesh resolution < lambda_min/' ...
+            num2str(sGeom.MeshResolution) '\n']);
+setupstr = horzcat(setupstr, ['# Incoming plane wave with k_inc = ' mat2str(sFDTD.Kinc) ...
+                ' and polarization = ' mat2str(sFDTD.Polarization) '\n']);
+retval = horzcat(setupstr,matstring, geomstring);
 % CreateMesh
 % definePorts
 % defineDumps
