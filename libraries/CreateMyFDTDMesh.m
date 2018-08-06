@@ -4,7 +4,8 @@ function mesh = CreateMyFDTDMesh(CSX, sGeom, tbm);
 % and the structure tbm holding meshlines in x,y and z-direction
 % tbm.x, tbm.y, tbm.z and the total thickness of the structure in
 % z-direction tbm.TotalThickness
-[UClx, UCly] = sGeom.UCDim;
+UClx = sGeom.UCDim(1);
+UCly = sGeom.UCDim(2);
 mesh.x = [-UClx/2, tbm.x, UClx/2];
 mesh.y = [-UClx/2, tbm.y, UClx/2];
 % decide size of the simulation volume in z-direction by checking,
@@ -20,13 +21,13 @@ if strcmp(sGeom.grounded, 'False');
     end;
 end;
 zmax = lz_structure+sGeom.z_size;
-while (zmax-lz_strucutre)/sGeom.maxres < 17;
+while (zmax-lz_structure)/sGeom.maxres.z < 17;
     zmax = zmax + sGeom.maxres.z;
 end;
-
-mesh.x = SmoothMeshLines(mesh.x, sGeom.maxres.x, 1.4);
-mesh.y = SmoothMeshLines(mesh.y, sGeom.maxres.y, 1.4);
-mesh.z = SmoothMeshLines(mesh.z, sGeom.maxres.z, 1.4);
+maxres = sGeom.maxres;
+mesh.x = SmoothMeshLines(mesh.x, maxres.x, 1.4);
+mesh.y = SmoothMeshLines(mesh.y, maxres.y, 1.4);
+mesh.z = SmoothMeshLines([zmin, tbm.z, zmax], maxres.z, 1.4);
 CSX = DefineRectGrid(CSX, sGeom.Unit, mesh);
 mesh = AddPML(mesh, PMLdirections);
 end;

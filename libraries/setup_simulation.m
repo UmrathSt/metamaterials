@@ -23,15 +23,16 @@ function [retval] = setup_simulation(sim_setup)
 retval = 'None';
 sFDTD = sim_setup.FDTD;
 sPP = sim_setup.PP;
+sPP.grounded = sFDTD.Geometry.grounded;
 sGeom = sim_setup.Geometry;
 FDTD = InitFDTD('EndCriteria', sFDTD.EndCriteria);
 fc = 0.5*(sFDTD.fstart+sFDTD.fstop);
 fw = 0.5*(sFDTD.fstop-sFDTD.fstart);
 FDTD = SetGaussExcite(FDTD, fc, fw);
-maxres = 3e8/sGeom.MeshResolution/sGeom.Unit;
-sGeom.maxres.z = maxres;
-sGeom.maxres.x = sGeom.maxres.z;
-sGeom.maxres.y = sGeom.maxres.z;
+maxres.z = 3e8/sGeom.MeshResolution/sFDTD.fstop/sGeom.Unit;
+maxres.y = maxres.z;
+maxres.x = maxres.z;
+sGeom.maxres = maxres;
 sGeom.z_size = 0.5*3e8/sFDTD.fstart;
 if ~all(sFDTD.Kinc == [0, 0, -1]);
     error('Currently only perpendicular incidence and propagation in -z direction is implemented via boundary conditions');
@@ -78,8 +79,8 @@ setupstr = horzcat(setupstr, ['# Incoming plane wave with k_inc = ' mat2str(sFDT
 retval = horzcat(setupstr,matstring, geomstring);
 % CreateMesh
 mesh = CreateMyFDTDMesh(CSX, sGeom, tbm);
-
 % definePorts
+[CSX, Port] = definePorts(CSX, mesh, sPP);
 % defineDumps
 % WriteCSX
 % RunOpenEMS
