@@ -2,6 +2,8 @@
 clc;
 clear;
 addpath('../');
+sim_setup.FDTD.Write = 'True';
+sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 1e9;
 sim_setup.FDTD.fstop = 10e9;
@@ -12,7 +14,13 @@ sim_setup.Geometry.grounded = 'False';
 sim_setup.Geometry.MeshResolution = 20;
 sim_setup.Geometry.Unit = 1e-3;
 sim_setup.Geometry.UCDim = [10, 10]; % size of the unit-cell in the xy-plane
-sim_setup.PP.SParameters.df
+SParameters.df = 1e6;
+SParameters.fstart = sim_setup.FDTD.fstart;
+SParameters.fstop = sim_setup.FDTD.fstop;
+PP.TDDump = 'False';
+PP.FDDump = 'False';
+PP.SParameters = SParameters;
+sim_setup.PP = PP;
 % Define the materials which are used:
 mCu.Name = 'Cu';
 mCu.Type = 'Material';

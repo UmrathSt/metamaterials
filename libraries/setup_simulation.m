@@ -1,8 +1,8 @@
 function [retval] = setup_simulation(sim_setup)
 % Take the structure simulation_setup and create the simulation files 
-% for simulation_setup{1} to simulation_setup{end} in the folder
-% if simulation_setup{i}.Paths.SimPath = ',,,/folder.../'
-% if simulation_setup{i}.Paths.ResultPath = ',,,/folder.../'
+% for simulation_setup to simulation_setup{end} in the folder
+% if simulation_setup.Paths.SimPath = ',,,/folder.../'
+% if simulation_setup.Paths.ResultPath = ',,,/folder.../'
 % the following binary variables exist:
 %%
 % if simulation_setup.Geometry.show = 'True', show the geometry in AppCSXCAD
@@ -10,20 +10,27 @@ function [retval] = setup_simulation(sim_setup)
 % if simulation_setup.FDTD.Run = 'True', run the simulation
 % if simulation_setup.PP.DumpSParameters = 'True' Dump S-Parameters to the folder ResultPath
 % simulation_setup.PP.SParameterFilename = 'S_params_xy';
-% if simulation_setup.PP.TDDump = 'True'
-% simulation_setup.PP.TDDumpFilename = 'TD_dump_xy'
-% if simulation_setup.PP.FDDump = 'True'
-% if simulation_setup.PP.FDDumpFrequencies = linspace(1,10,10)*1e9;
-% simulation_setup.PP.FDDumpFilename = 'FD_dump_xy'
+% if simulation_setup.PP.TDDump.Status = 'True'
+% simulation_setup.PP.TDDump.Filename = 'TD_dump_xy'
+% if simulation_setup.PP.FDDump.Status = 'True'
+% if simulation_setup.PP.FDDump.Frequencies = linspace(1,10,10)*1e9;
+% simulation_setup.PP.FDDump.Filename = 'FD_dump_xy'
 % simulation_setup.FDTD.fstart = 1e9
 % simulation_setup.FDTD.fstop = 10e9;
 % simulation_setup.FDTD.EndCriteria = 1e-6;
 % simulation_setup.FDTD.Polarization = [1,0,0];
 % simulation_setup.FDTD.Kinc = [0,0,-1];
+physical_constants;
+
 retval = 'None';
+sim_setup.Machine = uname.nodename();
 sFDTD = sim_setup.FDTD;
+Paths = sim_setup.Paths;
+SimPath = Paths.SimPath;
+SimCSX = Paths.SimCSX;
+ResPath = Paths.ResultPath;
 sPP = sim_setup.PP;
-sPP.grounded = sFDTD.Geometry.grounded;
+sPP.grounded = sim_setup.Geometry.grounded;
 sPP.Polarization = sFDTD.Polarization;
 sPP.Kinc = sFDTD.Kinc;
 sGeom = sim_setup.Geometry;
@@ -72,7 +79,7 @@ CSX = InitCSX();
 [CSX, geomstring, tbm] = AddLayers(CSX, sim_setup.used_layers, 0);
 sPP.TotalThickness = tbm.TotalThickness;
 runtime = strftime ("%r (%Z) %A %e %B %Y", localtime (time ()));
-setupstr = ['# openEMS run on machine: ' uname.nodename ' at ' runtime '\n'];
+setupstr = ['# openEMS run on machine ' sim_setup.Machine ' at ' runtime '\n'];
 setupstr = horzcat(setupstr, ['# Simulation parameters: Gauss-pulse with fc = '...
              num2str(fc/1e9) ' GHz, fw = ' num2str(fw/1e9) ' GHz, EndCriteria = ' ...
              num2str(sFDTD.EndCriteria) '\n']);
@@ -82,10 +89,28 @@ setupstr = horzcat(setupstr, ['# Incoming plane wave with k_inc = ' mat2str(sFDT
                 ' and polarization = ' mat2str(sFDTD.Polarization) '\n']);
 retval = horzcat(setupstr,matstring, geomstring);
 % CreateMesh
-mesh = CreateMyFDTDMesh(CSX, sGeom, tbm);
+[CSX, mesh] = CreateMyFDTDMesh(CSX, sGeom, tbm);
 % definePorts
 [CSX, Port, sPP] = definePorts(CSX, mesh, sPP);
 % defineDumps
+if strcmp(sPP.TDDDump.Status, 'True') || strcmp(sPP.FDDump.Status, 'True');
+    CSX = defineFiledDumps(CSX, sPP);
+end;
 % WriteCSX
+if strcmp(sFDTD.Write, 'True');
+    exists = exist(Paths.SimPath)
+    if exists == 7;
+        WriteOpenEMS([Paths.SimPath Paths.SimCSX], FDTD, CSX);
+    elseif exists == 0;
+         [status, message, mid] = mkdir(Paths.SimPath ); % create empty simulation folder
+    end;
+    WriteOpenEMS([Paths.SimPath Paths.SimCSX], FDTD, CSX);
+end;
 % RunOpenEMS
+if strcmp(sFDTD.Run, 'True');
+    openEMS_opts = ['--engine=multithreaded --numThreads=' num2str(sFDTD.numThreads)];%'-vvv';
+    %Settings = ['--debug-PEC', '--debug-material'];
+    Settings = [''];
+    RunOpenEMS(Paths.SimPath, Path.SimCSX, openEMS_opts, Settings);
+end;
 end

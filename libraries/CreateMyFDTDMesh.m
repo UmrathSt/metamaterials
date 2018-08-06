@@ -1,4 +1,4 @@
-function mesh = CreateMyFDTDMesh(CSX, sGeom, tbm);
+function [CSX, mesh] = CreateMyFDTDMesh(CSX, sGeom, tbm);
 % Create the FDTD mesh.x mesh.y and mesh.y
 % from the cell array sGeom holding general information
 % and the structure tbm holding meshlines in x,y and z-direction
