@@ -43,7 +43,7 @@ maxres.z = 3e8/sGeom.MeshResolution/sFDTD.fstop/sGeom.Unit;
 maxres.y = maxres.z;
 maxres.x = maxres.z;
 sGeom.maxres = maxres;
-sGeom.z_size = 0.5*3e8/sFDTD.fstart;
+sGeom.z_size = C0/sFDTD.fstart/2/sGeom.Unit;
 if ~all(sFDTD.Kinc == [0, 0, -1]);
     error('Currently only perpendicular incidence and propagation in -z direction is implemented via boundary conditions');
 end;
@@ -72,7 +72,7 @@ for i = 1:3;
         BC(2*i-1) = 1;
     end;
 end;
-%fprintf(['Using the following boundary conditions: ' mat2str(BC) '\n']);
+fprintf(['Using the following boundary conditions: ' mat2str(BC) '\n']);
 FDTD = SetBoundaryCond(FDTD, BC);
 CSX = InitCSX();
 [CSX, matstring] = defineCSXMaterials(CSX, sim_setup.used_materials);
@@ -93,24 +93,28 @@ retval = horzcat(setupstr,matstring, geomstring);
 % definePorts
 [CSX, Port, sPP] = definePorts(CSX, mesh, sPP);
 % defineDumps
-if strcmp(sPP.TDDDump.Status, 'True') || strcmp(sPP.FDDump.Status, 'True');
+if strcmp(sPP.TDDump.Status, 'True') || strcmp(sPP.FDDump.Status, 'True');
     CSX = defineFiledDumps(CSX, sPP);
 end;
 % WriteCSX
 if strcmp(sFDTD.Write, 'True');
-    exists = exist(Paths.SimPath)
+    exists = exist([Paths.SimBasePath Paths.SimPath]);
     if exists == 7;
-        WriteOpenEMS([Paths.SimPath Paths.SimCSX], FDTD, CSX);
+        WriteOpenEMS([Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX], FDTD, CSX);
     elseif exists == 0;
-         [status, message, mid] = mkdir(Paths.SimPath ); % create empty simulation folder
+         [status, message, mid] = mkdir([Paths.SimBasePath Paths.SimPath]) % create empty simulation folder
     end;
-    WriteOpenEMS([Paths.SimPath Paths.SimCSX], FDTD, CSX);
+    WriteOpenEMS([Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX], FDTD, CSX);
+end;
+% show geometry or not
+if strcmp(sGeom.Show, 'True');
+    CSXGeomPlot([Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX]);
 end;
 % RunOpenEMS
 if strcmp(sFDTD.Run, 'True');
     openEMS_opts = ['--engine=multithreaded --numThreads=' num2str(sFDTD.numThreads)];%'-vvv';
     %Settings = ['--debug-PEC', '--debug-material'];
     Settings = [''];
-    RunOpenEMS(Paths.SimPath, Path.SimCSX, openEMS_opts, Settings);
+    RunOpenEMS([Paths.SimBasePath Paths.SimPath], Paths.SimCSX, openEMS_opts, Settings);
 end;
 end
