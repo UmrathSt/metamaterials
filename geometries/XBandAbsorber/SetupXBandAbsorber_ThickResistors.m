@@ -22,14 +22,14 @@ sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.Geometry.Show = 'True';
 sim_setup.Geometry.grounded = 'True';
-sim_setup.Geometry.MeshResolution = [40, 40,20];
+sim_setup.Geometry.MeshResolution = [40, 40,30];
 sim_setup.Geometry.Unit = 1e-3;
 UCDim = 14.25;
 sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-plane
 SParameters.df = 1e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-SParameters.ResultFilename = 'lz_3.2_withoutR';
+SParameters.ResultFilename = 'lz_3.2_withR_eps_4.4';
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -46,16 +46,16 @@ mCuSheet.Type = 'ConductingSheet';
 mCuSheet.Properties.Thickness = 18e-6;
 mCuSheet.Properties.Kappa = 56e6;
 Rwidth = 0.5;
-Rthickness = 0.35
-R30 = 0.001;
-R300 = 0.01;
+Rthickness = 0.35;
+R30 = 30;
+R300 = 300;
 mRI.Properties.Epsilon= 1;
-mRI.Properties.Kappa = Rthickness*sim_setup.Geometry.Unit/R30;
+mRI.Properties.Kappa = 1/Rwidth/R30/sim_setup.Geometry.Unit;
 mRI.Name = '30OhmResistor';
 mRI.Type = 'Material';
 
 mRO.Properties.Epsilon = 1;
-mRO.Properties.Kappa = Rthickness*sim_setup.Geometry.Unit/R300;
+mRO.Properties.Kappa = 1/Rwidth/R300/sim_setup.Geometry.Unit;
 mRO.Name = '300OhmResistor';
 mRO.Type = 'Material';
 
@@ -63,11 +63,12 @@ mRO.Type = 'Material';
 mFR4.Name = 'FR4';
 mFR4.Type = 'Material';
 mFR4.Properties.Kappa = 0.05;
-mFR4.Properties.Epsilon = 4.6;
+mFR4.Properties.Epsilon = 4.4;
 materials{1} = mCu;
 materials{2} = mFR4;
 materials{3} = mCuSheet;
 materials{4} = mRI;
+materials{5} = mRO;
 
 % End of material definition
 % Define the objects which are made of the defined materials
@@ -78,11 +79,12 @@ oCuSlab.Thickness = 1;
 oCuSlab.Bstart = [-UCDim/2, -UCDim/2, 0];
 oCuSlab.Bstop =  [UCDim/2, UCDim/2, 1];
 oCuSlab.Prio = 1;
+% inner resistors
 oRI.Name = '30OhmResistor';
 oRI.MName = '30OhmResistor';
 oRI.Type = 'Box';
 oRI.Thickness = Rthickness;
-oRI.Prio = 3;
+oRI.Prio = 5;
 oRI.Bstart = [0.5, Rwidth/2, 0];
 oRI.Bstop =  [1.2, -Rwidth/2, Rthickness];
 
@@ -92,6 +94,22 @@ oRI3 = oRI;
 oRI3.Transform = {'Rotate_Z', pi};
 oRI4 = oRI;
 oRI4.Transform = {'Rotate_Z', 3*pi/2};
+% outer resistors
+oRO.Name = '300OhmResistor';
+oRO.MName = '300OhmResistor';
+oRO.Type = 'Box';
+oRO.Thickness = Rthickness;
+oRO.Prio = 5;
+oRO.Bstart = [+Rwidth/2, -0.35, 0];
+oRO.Bstop =  [-Rwidth/2, +0.35, Rthickness];
+oRO.Transform =  {'Translate', [2., 0, 0], 'Rotate_Z', pi/4};
+
+oRO2 = oRO;
+oRO2.Transform = {'Translate', [2, 0, 0], 'Rotate_Z', pi/4+pi/2};
+oRO3 = oRO;
+oRO3.Transform = {'Translate', [2, 0, 0], 'Rotate_Z', pi/4+pi};
+oRO4 = oRO;
+oRO4.Transform ={'Translate', [2, 0, 0], 'Rotate_Z', pi/4+3*pi/2};
 
 oFSS.Name = 'CopperPolygon';
 oFSS.MName = 'CuSheet';
@@ -139,6 +157,10 @@ layer4.objects{1} = oRI;
 layer4.objects{2} = oRI2;
 layer4.objects{3} = oRI3;
 layer4.objects{4} = oRI4;
+layer4.objects{5} = oRO;
+layer4.objects{6} = oRO2;
+layer4.objects{7} = oRO3;
+layer4.objects{8} = oRO4;
 layer4.Thickness = oRI.Thickness;
 %layer3.objects{7} = oRSheetI2;
 %layer3.objects{8} = oRSheetI3;
