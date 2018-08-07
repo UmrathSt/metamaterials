@@ -73,7 +73,7 @@ for i = 1:3;
         BC(2*i-1) = 1;
     end;
 end;
-fprintf(['Using the following boundary conditions: ' mat2str(BC) '\n']);
+%fprintf(['Using the following boundary conditions: ' mat2str(BC) '\n']);
 FDTD = SetBoundaryCond(FDTD, BC);
 CSX = InitCSX();
 [CSX, matstring] = defineCSXMaterials(CSX, sim_setup.used_materials);
