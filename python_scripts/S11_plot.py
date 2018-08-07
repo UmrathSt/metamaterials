@@ -35,4 +35,4 @@ g.plot([graph.data.values(x = data[:, xaxis]/1e9, y = S11_dB)],
        [graph.style.line([color.rgb.black])])
 
 
-g.writePDFfile(args.folder + "/" + args.outfile[0:-3] + "pdf")
+g.writePDFfile(args.folder + "/" + args.outfile)

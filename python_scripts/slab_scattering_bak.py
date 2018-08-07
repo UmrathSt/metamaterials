@@ -56,17 +56,14 @@ class SlabStructure:
 
 if __name__ == "__main__":
     from matplotlib import pyplot as plt
-    tand1 = 0.02
-    eps1 = 4.4 
-    epsFR4 = eps1*(1 + tand1*1j)
-    eps2 = 2.8
-     
+    kappa = 0.1;
+    epsFR4 = 4.6 
     Z0 = 376.3
     f = (np.linspace(0,20,1000)*1e9)
-    epsRubber = eps2 + 2000j/(8.85e-12*2*np.pi*10e9)
-    eps = np.array([1, epsRubber, 1])[:,np.newaxis]
-    Zlist = np.array([Z0,Z0/np.sqrt(epsRubber),Z0])[:,np.newaxis]
-    l = np.array([12e-3])[:,np.newaxis]
+    epsFR4 = 4.6+1j*kappa/(2*np.pi*f*8.85e-12)
+    eps = np.array([1, epsFR4, 1e8j])[:,np.newaxis]
+    Zlist = np.array([Z0,Z0/np.sqrt(epsFR4),0])[:,np.newaxis]
+    l = np.array([2e-3])[:,np.newaxis]
     k = np.sqrt(eps)*2*np.pi*f/3e8
     slabstack = SlabStructure(Zlist, l, k)
     R = slabstack.build_gamma()
