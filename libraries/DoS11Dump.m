@@ -5,18 +5,18 @@ df       = sPP.SParameters.df;
 freq = linspace(fstart, fstop, round((fstop - fstart)/df));
 Sim_Path = [sPP.Paths.SimBasePath sPP.Paths.SimPath];
 Res_Path = [sPP.Paths.ResultBasePath sPP.Paths.ResultPath '/' ];
-s11_filename = horzcat('S11_', sPP.SParameters.ResultFilename);
-s21_filename = horzcat('S21_', sPP.SParameters.ResultFilename);
+s11_filename = strcat('S11_', sPP.SParameters.ResultFilename);
+s21_filename = strcat('S21_', sPP.SParameters.ResultFilename);
 params = sPP.ParamStr;
-port{1} = calcPort(port{1}, Sim_Path, freq, 'RefImpedance', 376.73);%, 'RefImpedance', 130
+port{1} = calcPort(port{1}, Sim_Path, freq, 'RefImpedance', 376.73, 'SwitchDirection', 1);%, 'RefImpedance', 130
 S11Phase = exp(sPP.S11PhaseFactor*freq);
 Z1 = port{1}.uf.tot ./ port{1}.if.tot;
 s11 = port{1}.uf.ref ./ (port{1}.uf.inc).*S11Phase;
 s21 = zeros(1, length(freq));
 
 if ~strcmp(sPP.grounded, 'True');
-    S21Phase = exp(sPP.S21PhaseFactor*freq);
-    port{2} = calcPort(port{2}, Sim_Path, freq, 'RefImpedance', 376.73);%, 'RefImpedance', 130
+    S21Phase = exp(sPP.S21PhaseFactor.*freq);
+    port{2} = calcPort(port{2}, Sim_Path, freq, 'RefImpedance', 376.73, 'SwitchDirection', 1);%, 'RefImpedance', 130
     s21 = port{2}.uf.inc./port{1}.uf.inc*S21Phase;
 end;
   Zin = 376.73 .* sqrt(((1+s11) .**2-s21.**2)./ ((1-s11).**2-s21.**2));
@@ -32,7 +32,6 @@ elseif folder_status == 7;
 else;
         error(['There is a problem with the S11 result folder! ( ' num2str(STATUS) ')' '\n error message: ' MSG '\n']);
 end;
-  fprintf(['Using the result file: ', s_folder s11_filename '\n']);
   outfile = fopen([s_folder s11_filename], 'w+');
   fprintf(outfile, [params]);
   fprintf(outfile, '# Re/Im parts of the scattering parameters S11 (refl.) and S21 (transm.) and the real and imaginary part of the input impedance as a function of frequency \n');
