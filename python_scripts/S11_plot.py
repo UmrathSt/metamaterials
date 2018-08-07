@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pyx import *
+from pyx.graph import axis
 import numpy as np
 import sys
 text.set(mode="latex")
@@ -10,6 +11,9 @@ text.set(text.LatexRunner)
 text.preamble(r"\usepackage{amsmath}")
 unit.set(xscale=1.0)
 import argparse
+xgridpainter = axis.painter.regular(gridattrs=[attr.changelist([style.linestyle.dashed, None])])
+ygridpainter = axis.painter.regular(gridattrs=[attr.changelist([style.linestyle.dashed, None])])
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--infile", action = "store")
@@ -28,8 +32,8 @@ S11_dB = 20*np.log10(abs(data[:, yaxis] + 1j*data[:, yaxis+1]))
 
 
 g = graph.graphxy(width=8,
-		x = graph.axis.lin(title = args.xlabel),
-		y = graph.axis.lin(title = args.ylabel, max=0),
+		x = graph.axis.lin(title = args.xlabel, painter=xgridpainter),
+		y = graph.axis.lin(title = args.ylabel, max=0, painter=ygridpainter),
 		)
 g.plot([graph.data.values(x = data[:, xaxis]/1e9, y = S11_dB)],
        [graph.style.line([color.rgb.black])])

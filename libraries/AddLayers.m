@@ -68,8 +68,7 @@ for i = 1:layerNo; % loop over layers
                                                         num2str(startz+ob.Thickness) '.\n']);  
             geomstr = horzcat(geomstr, trafostr);
         else error(["Unknown object type " ob.Type]);
+        end;
     end;
     startz = startz + lay.Thickness;
-end;
-
 end
