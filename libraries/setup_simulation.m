@@ -33,6 +33,7 @@ sPP = sim_setup.PP;
 sPP.grounded = sim_setup.Geometry.grounded;
 sPP.Polarization = sFDTD.Polarization;
 sPP.Kinc = sFDTD.Kinc;
+sPP.Paths = Paths;
 sGeom = sim_setup.Geometry;
 sPP.Unit = sGeom.Unit;
 FDTD = InitFDTD('EndCriteria', sFDTD.EndCriteria);
@@ -87,7 +88,8 @@ setupstr = horzcat(setupstr, ['# Mesh resolution < lambda_min/' ...
             num2str(sGeom.MeshResolution) '\n']);
 setupstr = horzcat(setupstr, ['# Incoming plane wave with k_inc = ' mat2str(sFDTD.Kinc) ...
                 ' and polarization = ' mat2str(sFDTD.Polarization) '\n']);
-retval = horzcat(setupstr,matstring, geomstring);
+paramstr = horzcat(setupstr,matstring, geomstring);
+sPP.ParamStr = paramstr;
 % CreateMesh
 [CSX, mesh] = CreateMyFDTDMesh(CSX, sGeom, tbm);
 % definePorts
@@ -117,4 +119,9 @@ if strcmp(sFDTD.Run, 'True');
     Settings = [''];
     RunOpenEMS([Paths.SimBasePath Paths.SimPath], Paths.SimCSX, openEMS_opts, Settings);
 end;
+% do PostProcessing
+if strcmp(sPP.DoSPararmeterDump, 'True');
+    [port] = DoS11Dump(Port, sPP);
+end;
+
 end
