@@ -39,6 +39,8 @@ sPP.Unit = sGeom.Unit;
 FDTD = InitFDTD('EndCriteria', sFDTD.EndCriteria);
 fc = 0.5*(sFDTD.fstart+sFDTD.fstop);
 fw = 0.5*(sFDTD.fstop-sFDTD.fstart);
+sPP.fc = fc;
+sGeom
 FDTD = SetGaussExcite(FDTD, fc, fw);
 type_of_res = typeinfo(sGeom.MeshResolution);
 if strcmp(type_of_res, 'matrix') && length(sGeom.MeshResolution) == 3;
@@ -102,10 +104,10 @@ sPP.ParamStr = paramstr;
 % CreateMesh
 [CSX, mesh] = CreateMyFDTDMesh(CSX, sGeom, tbm);
 % definePorts
-[CSX, Port, sPP] = definePorts(CSX, mesh, sPP);
+[CSX, Port, sPP, portstr] = definePorts(CSX, mesh, sPP);
 % defineDumps
 if strcmp(sPP.TDDump.Status, 'True') || strcmp(sPP.FDDump.Status, 'True');
-    CSX = defineFiledDumps(CSX, sPP);
+    CSX = defineFieldDumps(CSX, sPP);
 end;
 % WriteCSX
 if strcmp(sFDTD.Write, 'True');

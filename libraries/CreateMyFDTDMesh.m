@@ -29,5 +29,8 @@ mesh.x = SmoothMeshLines(mesh.x, maxres.x, 1.4);
 mesh.y = SmoothMeshLines(mesh.y, maxres.y, 1.4);
 mesh.z = SmoothMeshLines([zmin, tbm.z, zmax], maxres.z, 1.4);
 CSX = DefineRectGrid(CSX, sGeom.Unit, mesh);
+% add materials to the left/right of the structure if necessary
+
+%
 mesh = AddPML(mesh, PMLdirections);
 end;
