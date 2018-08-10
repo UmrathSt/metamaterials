@@ -30,6 +30,22 @@ mesh.y = SmoothMeshLines(mesh.y, maxres.y, 1.4);
 mesh.z = SmoothMeshLines([zmin, tbm.z, zmax], maxres.z, 1.4);
 CSX = DefineRectGrid(CSX, sGeom.Unit, mesh);
 % add materials to the left/right of the structure if necessary
+try;
+    start = [mesh.x(1), mesh.y(1), mesh.z(end)];
+    z_index = find(mesh.z == sGeom.z_size);
+    stop  = [mesh.x(end), mesh.y(end), mesh.z(z_index)]
+    CSX = AddBox(CSX, sGeom.lMaterial.Name, 1, start, stop);
+    catch lasterror;
+end;
+if ~strcmp(sGeom.grounded, 'True');
+    try;
+        start = [mesh.x(1), mesh.y(1), mesh.z(end)];
+        z_index = find(mesh.z == 0);
+        stop  = [mesh.x(end), mesh.y(end), mesh.z(z_index)]
+        CSX = AddBox(CSX, sGeom.rMaterial.Name, 1, start, stop);
+        catch lasterror;    
+    end;
+end;
 
 %
 mesh = AddPML(mesh, PMLdirections);
