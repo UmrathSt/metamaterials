@@ -14,7 +14,7 @@ Z1 = port{1}.uf.tot ./ port{1}.if.tot;
 s11 = port{1}.uf.ref ./ (port{1}.uf.inc).*S11Phase;
 s21 = zeros(1, length(freq));
 
-if ~strcmp(sPP.grounded, 'True');
+if strcmp(sPP.grounded, 'False');
     S21Phase = exp(sPP.S21PhaseFactor.*freq);
     port{2} = calcPort(port{2}, Sim_Path, freq, 'RefImpedance', 376.73, 'SwitchDirection', 1);%, 'RefImpedance', 130
     s21 = port{2}.uf.inc./port{1}.uf.inc.*S21Phase;
@@ -47,7 +47,7 @@ end;
   PYScriptPath = [sPP.Paths.ResultBasePath 'python_scripts/S11_plot.py'];
   system(['python3 ' PYScriptPath ' --infile ' s11_filename ' --xlabel ' xlabel ' --ylabel ' ylabelS11 ' --folder ' s_folder ' --outfile ' s11_filename ' --Xaxis ' num2str(0) ' --Yaxis ' num2str(1)]);
   if ~strcmp(sPP.grounded, 'True');
-    system(['python3 ' PYScriptPath ' --infile ' s21_filename ' --xlabel ' xlabel ' --ylabel ' ylabelS21 ' --folder ' s_folder ' --outfile ' s21_filename ' --Xaxis ' num2str(0) ' --Yaxis ' num2str(3)]);
+    system(['python3 ' PYScriptPath ' --infile ' s11_filename ' --xlabel ' xlabel ' --ylabel ' ylabelS21 ' --folder ' s_folder ' --outfile ' s21_filename ' --Xaxis ' num2str(0) ' --Yaxis ' num2str(3)]);
   end;
   return;
 end

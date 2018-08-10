@@ -78,15 +78,23 @@ if __name__ == "__main__":
     Zlist = np.zeros((3, Nf), dtype=np.complex128)
     eps[0,:] = 1
     eps[1,:] = args.eps + 1j*args.kappa/(2*np.pi*f*8.85e-12) 
-    eps[2,:] = 56e6j 
-    Zlist[:,:] = Z0, Z0/np.sqrt(eps[1,:]), Z0*0
+    eps[2,:] = 1 
+    Zlist[:,:] = Z0, Z0/np.sqrt(eps[1,:]), Z0
     l = np.array([args.L])[:,np.newaxis]
     k = np.sqrt(eps)*2*np.pi*f/3e8
     slabstack = SlabStructure(Zlist, l, k)
     R = slabstack.build_gamma()
     T = slabstack.build_tau()
     plt.plot(f/1e9, 20*np.log10(np.abs(R)),"b-", label="S11, L=50 mm")
-    #plt.plot(f/1e9, 20*np.log10(np.abs(T)),"r-", label="S21, L=50 mm")
+    plt.plot(f/1e9, 20*np.log10(np.abs(T)),"r-", label="S21, L=50 mm")
+    result = np.zeros((len(f), 5))
+    result[:,0] = f
+    result[:,1] = np.real(R)
+    result[:,2] = np.imag(R)
+    result[:,3] = np.real(T)
+    result[:,4] = np.imag(T)
+    header = "# Scattering and Transmission from a 3.2 mm FR4 slab with eps = 4.6+0.092i"
+    np.savetxt("slab_scattering", result, delimiter=",", header=header)
     plt.legend(loc="best").draw_frame(False)
     plt.xlabel("f [GHz]", fontsize=14)
     plt.ylabel("$20(\log|S11|),20(\log|S12|)$", fontsize=14)
