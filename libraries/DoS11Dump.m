@@ -11,7 +11,8 @@ s21_filename = strcat('S21_', sPP.SParameters.ResultFilename);
 params = sPP.ParamStr;
 port{1} = calcPort(port{1}, Sim_Path, freq, 'RefImpedance', 376.73, 'SwitchDirection', 1);%, 'RefImpedance', 130
 nleft = sqrt(sPP.lEpsilon+1j*sPP.lKappa./(2*pi*freq*EPS0));
-S11Phase = exp(-sPP.LSPort1*4j*pi.*freq.*nleft/C0);
+S11Phase = exp(sPP.LSPort1*4j*pi.*freq.*nleft/C0);
+s11factor = sPP.LSPort1*2j*pi.*freq.*nleft/C0;
 Z1 = port{1}.uf.tot ./ port{1}.if.tot;
 s11 = port{1}.uf.ref ./ (port{1}.uf.inc).*S11Phase;
 s21 = zeros(1, length(freq));
@@ -19,7 +20,7 @@ s21 = zeros(1, length(freq));
 if strcmp(sPP.grounded, 'False');
     nright = sqrt(sPP.rEpsilon+1j*sPP.rKappa./(2*pi*freq*EPS0));
     fprintf(['\n' num2str(sPP.LSPort2) '\n']);
-    S21Phase = exp(sPP.LSPort2*1j*pi.*freq.*nright/C0);
+    S21Phase = exp(sPP.LSPort2*2j*pi.*freq.*nright/C0+s11factor);
     port{2} = calcPort(port{2}, Sim_Path, freq, 'RefImpedance', 376.73, 'SwitchDirection', 1);%, 'RefImpedance', 130
     s21 = port{2}.uf.inc./port{1}.uf.inc.*S21Phase;
 end;
