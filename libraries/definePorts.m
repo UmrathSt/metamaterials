@@ -16,13 +16,23 @@ end;
 
 [CSX, port{1}] = AddWaveGuidePort(CSX, 10, 1, p1, p2, 2, func_E, func_H, 1, 1);
 % phasefactor has to be multiplied by exp(frequency)
-sPP.S11PhaseFactor = 2*pi*1j/C0*(p2(3)-sPP.TotalThickness)*2*sPP.Unit;
+nl = 1;
+try; 
+    nl = sPP.lindex;
+    catch lasterror;
+end;
+sPP.S11PhaseFactor = 2*pi*1j/C0*(p2(3)-sPP.TotalThickness)*nl*2*sPP.Unit;
 if strcmp(sPP.grounded, 'False');
     p3 = p2;
     p4 = [mesh.x(end), mesh.y(end), mesh.z(14)];
     [CSX, port{2}] = AddWaveGuidePort(CSX, 10, 2, p3, p4, 2, func_E, func_H, 1, 0);
     % phasefactor has to be multiplied by exp(frequency)
-    dist = p2(3)-p4(3)-sPP.TotalThickness;
+    nr = 1;
+    try;
+        nr = sPP.rindex;
+        catch lasterror;
+    end;
+    dist = (p2(3)-sPP.TotalThickness)*nl - p4(3)*nr;
     sPP.S21PhaseFactor = 2*pi*1j/C0*dist*sPP.Unit;
 end;
 end
