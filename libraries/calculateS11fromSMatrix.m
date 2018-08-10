@@ -1,4 +1,4 @@
-function [S11] = calculateS11fromSMatrix(resultfile, Dlz, Depsilon, Dkappa);
+function [S11, phase] = calculateS11fromSMatrix(resultfile, Dlz, Depsilon, Dkappa);
 % calculate the scattering parameter of a FSS coating on a
 % dielctric coating of thickness Dlz based on the 
 % results in the filename 'resultfile' which are for a FSS coating on top of
@@ -12,6 +12,6 @@ f = d(:,1);
 N = sqrt(Depsilon+1j*Dkappa./(2*pi*f*EPS0));
 R = d(:,2)+1j*d(:,3);
 T = d(:,4)+1j*d(:,5);
-phase = exp(2j*2*pi*f.*N*Dlz/C0);
+phase = exp(1j*2*pi*f.*N*2*Dlz/C0);
 S11 = (R - phase) ./ (1 - R.*phase);
 end

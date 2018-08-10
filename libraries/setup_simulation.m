@@ -100,13 +100,14 @@ setupstr = horzcat(setupstr, ['# Mesh resolution < lambda_min/' ...
 setupstr = horzcat(setupstr, ['# Incoming plane wave with k_inc = ' mat2str(sFDTD.Kinc) ...
                 ' and polarization = ' mat2str(sFDTD.Polarization) '\n']);
 paramstr = horzcat(setupstr,matstring, geomstring);
-sPP.ParamStr = paramstr;
+
 % CreateMesh
 [CSX, mesh] = CreateMyFDTDMesh(CSX, sGeom, tbm);
 % definePorts
 [CSX, Port, sPP, portstr] = definePorts(CSX, mesh, sPP);
-paramstr = horzcat(paramstr, portstr);
-%fprintf(['\n' paramstr]);
+sPP.ParamStr = horzcat(paramstr, portstr);
+
+%fprintf(['\n' sPP.ParamStr]);
 % defineDumps
 if strcmp(sPP.TDDump.Status, 'True') || strcmp(sPP.FDDump.Status, 'True');
     CSX = defineFieldDumps(CSX, sPP);

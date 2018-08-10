@@ -17,27 +17,36 @@ end;
 
 [CSX, port{1}] = AddWaveGuidePort(CSX, 10, 1, p1, p2, 2, func_E, func_H, 1, 1);
 % phasefactor has to be multiplied by exp(frequency)
-lindex = 1;
+lEpsilon = 1;
+lKappa = 0;
 try; 
-    lindex = sPP.lindex;
-    portstr = horzcat(portstr,['# Adding material with index ' num2str(lindex) ...
-                            ' on the excitation side of the structure \n']); 
+    lEpsilon = sPP.lEpsilon;
+    lKappa   = sPP.lKappa;
+    portstr = horzcat(portstr,['# Adding material with Epsilon = ' num2str(lEpsilon) ...
+                            ' and ' num2str(lKappa) ' on the exitation side of the structure \n']);  
     catch lasterror;
 end;
-sPP.S11PhaseFactor = 2*pi*1j/C0*(p2(3)-sPP.TotalThickness)*lindex*2*sPP.Unit;
+sPP.lKappa = lKappa;
+sPP.lEpsilon = lEpsilon;
+sPP.LSPort1 = (p2(3)-sPP.TotalThickness)*sPP.Unit;
 if strcmp(sPP.grounded, 'False');
     p3 = p2;
     p4 = [mesh.x(1), mesh.y(1), mesh.z(14)];
     [CSX, port{2}] = AddWaveGuidePort(CSX, 10, 2, p3, p4, 2, func_E, func_H, 1, 0);
     % phasefactor has to be multiplied by exp(frequency)
-    rindex = 1;
+    rEpsilon = 1;
+    rKappa = 0;
     try;
-        rindex = sPP.rindex;
-        portstr = horzcat(portstr,['# Adding material with index ' num2str(rindex) ...
-                            ' on the transmission side of the structure \n']); 
+        rEpsilon = sPP.rEpsilon;
+        rKappa = sPP.rKappa;
+        portstr = horzcat(portstr,['# Adding material with Epsilon = ' num2str(rEpsilon) ...
+                            ' and ' num2str(rKappa) ' on the transmission side of the structure \n']); 
         catch lasterror;
     end;
-    dist = (p2(3)-sPP.TotalThickness)*lindex - p4(3)*rindex;
-    sPP.S21PhaseFactor = 2*pi*1j/C0*dist*sPP.Unit;
+    sPP.rKappa = rKappa;
+    sPP.rEpsilon = rEpsilon;
+    % distance from structure to port 2
+    LSPort2 = p4(3)*sPP.Unit;
+    sPP.LSPort2 = LSPort2;
 end;
 end

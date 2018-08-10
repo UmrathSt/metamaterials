@@ -5,6 +5,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--L", dest="L", type=float)
 parser.add_argument("--eps", dest="eps", type=float)
 parser.add_argument("--kappa", dest="kappa", type=float)
+parser.add_argument("--epsB", dest="epsB", type=float, default=1)
+parser.add_argument("--kappaB", dest="kappaB", type=float, default=56e6)
+
 args = parser.parse_args()
 
 
@@ -76,10 +79,11 @@ if __name__ == "__main__":
     Z0 = np.ones(Nf)*376.73
     eps = np.zeros((3, Nf), dtype=np.complex128)
     Zlist = np.zeros((3, Nf), dtype=np.complex128)
+    print("kappaB=%f, epsB=%f" %(args.kappaB, args.epsB))
     eps[0,:] = 1
     eps[1,:] = args.eps + 1j*args.kappa/(2*np.pi*f*8.85e-12) 
-    eps[2,:] = 1 
-    Zlist[:,:] = Z0, Z0/np.sqrt(eps[1,:]), Z0
+    eps[2,:] = args.epsB + 1j*args.kappaB/(2*np.pi*f*8.85e-12) 
+    Zlist[:,:] = Z0, Z0/np.sqrt(eps[1,:]), Z0/np.sqrt(eps[2,:])
     l = np.array([args.L])[:,np.newaxis]
     k = np.sqrt(eps)*2*np.pi*f/3e8
     slabstack = SlabStructure(Zlist, l, k)
