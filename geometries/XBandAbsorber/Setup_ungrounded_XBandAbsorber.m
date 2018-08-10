@@ -1,6 +1,7 @@
 % Setup the XBand absorber simulation
 clc;
 clear;
+physical_constants;
 addpath('../../libraries');
 node = uname.nodename();
 Paths.SimBasePath = '/media/stefan/Daten/openEMS/metamaterials/';
@@ -19,11 +20,12 @@ sim_setup.FDTD.numThreads = 6;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 3e9;
 sim_setup.FDTD.fstop = 30e9;
+fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 sim_setup.FDTD.EndCriteria = 5e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.Geometry.Show = 'True';
-sim_setup.Geometry.grounded = 'True';
+sim_setup.Geometry.grounded = 'False';
 sim_setup.Geometry.MeshResolution = [40, 40,20];
 sim_setup.Geometry.Unit = 1e-3;
 UCDim = 14.25;
@@ -31,7 +33,7 @@ sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-pla
 SParameters.df = 1e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-SParameters.ResultFilename = 'lz_3.2_withR';
+SParameters.ResultFilename = 'lz_3.2_withR_transmission';
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -65,9 +67,19 @@ mFR4.Name = 'FR4';
 mFR4.Type = 'Material';
 mFR4.Properties.Kappa = 0.05;
 mFR4.Properties.Epsilon = 4.6;
-materials{1} = mCu;
-materials{2} = mFR4;
-materials{3} = mCuSheet;
+% take care of the material right of the structure
+% where transmission takes place
+rMaterial = mFR4;
+rEpsilon = rMaterial.Properties.Epsilon;
+rKappa = rMaterial.Properties.Kappa;
+sim_setup.Geometry.rMaterial = rMaterial;
+sim_setup.PP.rindex = sqrt(rEpsilon+1j*rKappa/(2*pi*fc*EPS0)); 
+%
+
+%materials{1} = mCu;
+materials{1} = mFR4;
+materials{2} = mCuSheet;
+
 %materials{4} = mRSheetI;
 %materials{5} = mRSheetO;
 %materials{5} = mRSheetS;
@@ -155,7 +167,7 @@ layer3.objects{5} = oRect;
 %layer3.objects{11} = oRSheetO2;
 %layer3.objects{12} = oRSheetO3;
 %layer3.objects{13} = oRSheetO4;
-sim_setup.used_layers = {layer1, layer2, layer3};
+sim_setup.used_layers = {layer2, layer3};
 sim_setup.used_materials = materials;
 
 retval = setup_simulation(sim_setup);

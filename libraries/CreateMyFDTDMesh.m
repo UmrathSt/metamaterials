@@ -33,15 +33,15 @@ CSX = DefineRectGrid(CSX, sGeom.Unit, mesh);
 try;
     start = [mesh.x(1), mesh.y(1), mesh.z(end)];
     z_index = find(mesh.z == sGeom.z_size);
-    stop  = [mesh.x(end), mesh.y(end), mesh.z(z_index)]
+    stop  = [mesh.x(end), mesh.y(end), mesh.z(z_index)];
     CSX = AddBox(CSX, sGeom.lMaterial.Name, 1, start, stop);
     catch lasterror;
 end;
 if ~strcmp(sGeom.grounded, 'True');
     try;
-        start = [mesh.x(1), mesh.y(1), mesh.z(end)];
+        start = [mesh.x(1), mesh.y(1), mesh.z(1)];
         z_index = find(mesh.z == 0);
-        stop  = [mesh.x(end), mesh.y(end), mesh.z(z_index)]
+        stop  = [mesh.x(end), mesh.y(end), mesh.z(z_index)];
         CSX = AddBox(CSX, sGeom.rMaterial.Name, 1, start, stop);
         catch lasterror;    
     end;

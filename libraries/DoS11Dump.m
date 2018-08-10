@@ -17,7 +17,7 @@ s21 = zeros(1, length(freq));
 if ~strcmp(sPP.grounded, 'True');
     S21Phase = exp(sPP.S21PhaseFactor.*freq);
     port{2} = calcPort(port{2}, Sim_Path, freq, 'RefImpedance', 376.73, 'SwitchDirection', 1);%, 'RefImpedance', 130
-    s21 = port{2}.uf.inc./port{1}.uf.inc*S21Phase;
+    s21 = port{2}.uf.inc./port{1}.uf.inc.*S21Phase;
 end;
   Zin = 376.73 .* sqrt(((1+s11) .**2-s21.**2)./ ((1-s11).**2-s21.**2));
   s_folder = [Res_Path];
