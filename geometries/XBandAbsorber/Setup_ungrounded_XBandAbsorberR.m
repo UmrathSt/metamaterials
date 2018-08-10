@@ -11,7 +11,7 @@ if strcmp(node, 'vlinux');
     Paths.ResultBasePath = '/home/stefan/Arbeit/openEMS/metamaterials/';
 end;
 Paths.SimPath = 'XBandAbsorber';
-Paths.SimCSX = 'XBandAbsorber_geometry.xml';
+Paths.SimCSX = 'XBandAbsorber_ungroundedR_geometry.xml';
 
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
 sim_setup.Paths = Paths;
@@ -33,7 +33,7 @@ sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-pla
 SParameters.df = 1e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-SParameters.ResultFilename = 'lz_3.2_withR_transmission';
+SParameters.ResultFilename = 'lz_3.2_ungroundedR';
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -85,13 +85,7 @@ materials{2} = mCuSheet;
 %materials{5} = mRSheetS;
 % End of material definition
 % Define the objects which are made of the defined materials
-oCuSlab.Name = 'CopperBackplane';
-oCuSlab.MName = 'Cu';
-oCuSlab.Type = 'Box';
-oCuSlab.Thickness = 1;
-oCuSlab.Bstart = [-UCDim/2, -UCDim/2, 0];
-oCuSlab.Bstop =  [UCDim/2, UCDim/2, 1];
-oCuSlab.Prio = 1;
+
 oRSheetI.Name = '30OhmResistor';
 oRSheetI.MName = '30OhmResistor';
 oRSheetI.Type = 'Polygon';
@@ -138,20 +132,8 @@ oRect.Type = 'Polygon';
 oRect.Thickness = 0;
 oRect.Prio = 4;
 oRect.Points = [[-0.5;-0.5],[0.5;-0.5],[0.5;0.5],[-0.5;0.5]];
-oFR4Slab.Name = 'FR4Background';
-oFR4Slab.MName = 'FR4';
-oFR4Slab.Type = 'Box';
-oFR4Slab.Thickness = 3.2;
-oFR4Slab.Prio = 2;
-oFR4Slab.Bstart = [-UCDim/2, -UCDim/2, 0];
-oFR4Slab.Bstop = [+UCDim/2, +UCDim/2, oFR4Slab.Thickness];
 
-layer1.Name = 'CuBackPlane';
-layer1.objects{1} = oCuSlab;
-layer1.Thickness = oCuSlab.Thickness;
-layer2.Name = 'FR4Substrate';
-layer2.Thickness = oFR4Slab.Thickness;
-layer2.objects{1} = oFR4Slab;
+
 layer3.Name = 'FSS';
 layer3.Thickness = 0; %ConcuctingSheet!
 layer3.objects{1} = oFSS;
@@ -159,15 +141,8 @@ layer3.objects{2} = oFSS2;
 layer3.objects{3} = oFSS3;
 layer3.objects{4} = oFSS4;
 layer3.objects{5} = oRect;
-%layer3.objects{6} = oRSheetI;
-%layer3.objects{7} = oRSheetI2;
-%layer3.objects{8} = oRSheetI3;
-%layer3.objects{9} = oRSheetI4;
-%layer3.objects{10} = oRSheetO;
-%layer3.objects{11} = oRSheetO2;
-%layer3.objects{12} = oRSheetO3;
-%layer3.objects{13} = oRSheetO4;
-sim_setup.used_layers = {layer2, layer3};
+
+sim_setup.used_layers = {layer3};
 sim_setup.used_materials = materials;
 
 retval = setup_simulation(sim_setup);
