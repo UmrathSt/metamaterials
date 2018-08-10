@@ -89,6 +89,7 @@ CSX = InitCSX();
 [CSX, matstring] = defineCSXMaterials(CSX, sim_setup.used_materials);
 [CSX, geomstring, tbm] = AddLayers(CSX, sim_setup.used_layers, 0);
 sPP.TotalThickness = tbm.TotalThickness;
+sGeom.TotalThickness = sPP.TotalThickness;
 runtime = strftime ("%r (%Z) %A %e %B %Y", localtime (time ()));
 setupstr = ['# openEMS run on machine ' sim_setup.Machine ' at ' runtime '\n'];
 setupstr = horzcat(setupstr, ['# Simulation parameters: Gauss-pulse with fc = '...

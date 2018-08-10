@@ -32,12 +32,12 @@ CSX = DefineRectGrid(CSX, sGeom.Unit, mesh);
 % add materials to the left/right of the structure if necessary
 try;
     start = [mesh.x(1), mesh.y(1), mesh.z(end)];
-    z_index = find(mesh.z == sGeom.z_size);
+    z_index = find(mesh.z == sGeom.TotalThickness);
     stop  = [mesh.x(end), mesh.y(end), mesh.z(z_index)];
     CSX = AddBox(CSX, sGeom.lMaterial.Name, 1, start, stop);
-    catch lasterror;
+    
 end;
-if ~strcmp(sGeom.grounded, 'True');
+if strcmp(sGeom.grounded, 'False');
     try;
         start = [mesh.x(1), mesh.y(1), mesh.z(1)];
         z_index = find(mesh.z == 0);
