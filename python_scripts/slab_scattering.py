@@ -97,7 +97,8 @@ if __name__ == "__main__":
     result[:,2] = np.imag(R)
     result[:,3] = np.real(T)
     result[:,4] = np.imag(T)
-    header = "# Scattering and Transmission from a 3.2 mm FR4 slab with eps = 4.6+0.092i"
+    header = "# Scattering and Transmission from a %.2f FR4 slab with eps = %.2f, kappa=%.2f" %(args.L, args.eps, args.kappa)
+    header += " in background medium of eps = %.2f, kappa = %.2f" %(args.epsB, args.kappaB)
     np.savetxt("slab_scattering", result, delimiter=",", header=header)
     plt.legend(loc="best").draw_frame(False)
     plt.xlabel("f [GHz]", fontsize=14)

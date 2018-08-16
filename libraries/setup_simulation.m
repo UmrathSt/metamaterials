@@ -110,7 +110,7 @@ sPP.ParamStr = horzcat(paramstr, portstr);
 %fprintf(['\n' sPP.ParamStr]);
 % defineDumps
 if strcmp(sPP.TDDump.Status, 'True') || strcmp(sPP.FDDump.Status, 'True');
-    CSX = defineFieldDumps(CSX, sPP);
+    CSX = defineFieldDumps(CSX, sPP, mesh);
 end;
 % WriteCSX
 if strcmp(sFDTD.Write, 'True');
@@ -137,5 +137,7 @@ end;
 if strcmp(sPP.DoSPararmeterDump, 'True');
     [port] = DoS11Dump(Port, sPP);
 end;
+
+    
 
 end
