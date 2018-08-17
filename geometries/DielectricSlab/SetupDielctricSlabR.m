@@ -21,8 +21,8 @@ sim_setup.FDTD.Run = 'True';
 % a too thin PML can result in an oscillation overlaying
 % the real S-Parameters of low frequencies are used in the simulation
 sim_setup.FDTD.PML = 'PML_12'; % use pml with 8 cells thickness, "2" would be MUR
-sim_setup.FDTD.fstart = 4e9;
-sim_setup.FDTD.fstop = 30e9;
+sim_setup.FDTD.fstart = 3e9;
+sim_setup.FDTD.fstop = 20e9;
 sim_setup.FDTD.fc = 0.5*(sim_setup.FDTD.fstart+sim_setup.FDTD.fstop);
 sim_setup.FDTD.EndCriteria = 1e-6;
 sim_setup.FDTD.Kinc = [0,0,-1];
@@ -56,8 +56,8 @@ m2.Properties.Epsilon = 3;
 m2.Properties.Kappa = 0.05;
 materials{2} = m2;
 rMaterial = m2;
-sim_setup.PP.rEpsilon = m2.Properties.Epsilon;
-sim_setup.PP.rKappa   = m2.Properties.Kappa;
+sim_setup.PP.rEpsilon = rMaterial.Properties.Epsilon;
+sim_setup.PP.rKappa   = rMaterial.Properties.Kappa;
 rEpsilon = rMaterial.Properties.Epsilon;
 rKappa = rMaterial.Properties.Kappa;
 sim_setup.Geometry.rMaterial = rMaterial;

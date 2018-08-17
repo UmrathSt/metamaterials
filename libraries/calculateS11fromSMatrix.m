@@ -7,7 +7,7 @@ physical_constants;
 if (typeinfo(Dlz) == 'matrix');
     error('So far only scalar values of the substrate thickness are implemented');
 end;
-d = dlmread(resultfile,',',21,0);
+d = dlmread(resultfile,',',22, 0);
 f = d(:,1);
 N = sqrt(Depsilon+1j*Dkappa./(2*pi*f*EPS0));
 R = d(:,2)+1j*d(:,3);
