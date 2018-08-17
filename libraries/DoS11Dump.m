@@ -30,7 +30,7 @@ if strcmp(sPP.grounded, 'False');
     S21Phase = exp(s21factor);
     port{2} = calcPort(port{2}, Sim_Path, freq, 'SwitchDirection', 1);
     Z2 = port{2}.ZL_ref;
-    imp_fact = sqrt(Z1./Z2);
+    imp_fact = 1;%sqrt(Z1./Z2);
     s21 = imp_fact.*port{2}.uf.inc./port{1}.uf.inc.*S21Phase;
 end;
   Zin = sqrt(4*pi*1e-7./(EPS0*epsilon_right)) .* sqrt(((1+s11) .**2-s21.**2)./ ((1-s11).**2-s21.**2));
