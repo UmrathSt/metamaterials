@@ -22,9 +22,9 @@ ax1.plot(d1[:,0]/1e9, abs(d1[:,3]+1j*d1[:,4]), "b-", label=args.label1+" S21")
 ax1.plot(d2[:,0]/1e9, abs(d2[:,3]+1j*d2[:,4]), "b--", label=args.label2+" S21")
 
 ax2.plot(d1[:,0]/1e9, np.angle(d1[:,1]+1j*d1[:,2]), "r-", label=args.label1+" S11")
-ax2.plot(d2[:,0]/1e9, -np.angle(d2[:,1]+1j*d2[:,2]), "r--", label=args.label2+" S11")
+ax2.plot(d2[:,0]/1e9, np.angle(d2[:,1]+1j*d2[:,2]), "r--", label=args.label2+" S11")
 ax2.plot(d1[:,0]/1e9, np.angle(d1[:,3]+1j*d1[:,4]), "b-", label=args.label1+" S21")
-ax2.plot(d2[:,0]/1e9, -np.angle(d2[:,3]+1j*d2[:,4]), "b--", label=args.label2+" S21")
+ax2.plot(d2[:,0]/1e9, np.angle(d2[:,3]+1j*d2[:,4]), "b--", label=args.label2+" S21")
 
 ax1.set_xlabel("f [GHz]")
 ax1.set_ylabel("|S11|, |S21|")

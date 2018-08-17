@@ -21,6 +21,7 @@ S11Phase = exp(2*s11factor);
 
 
 s11 = port{1}.uf.ref ./ (port{1}.uf.inc).*S11Phase;
+s11 = abs(s11).*exp(-1j.*angle(s11));
 s21 = zeros(1, length(freq));
 
 if strcmp(sPP.grounded, 'False');
@@ -33,6 +34,7 @@ if strcmp(sPP.grounded, 'False');
     port{2} = calcPort(port{2}, Sim_Path, freq, 'SwitchDirection', 1, 'RefImpedance', Z2);
     fprintf('Z2(1) = %.2f+i %.2f \n', real(Z2(1)), imag(Z2(1)));
     s21 = port{2}.uf.inc./port{1}.uf.inc.*S21Phase;
+    s21 = abs(s21).*exp(-1j.*angle(s21));
 end;
   Zin = sqrt(4*pi*1e-7./(EPS0*epsilon_right)) .* sqrt(((1+s11) .**2-s21.**2)./ ((1-s11).**2-s21.**2));
   s_folder = [Res_Path];
