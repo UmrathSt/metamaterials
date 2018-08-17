@@ -4,7 +4,7 @@ function [CSX, port, sPP, portstr] = definePorts(CSX, mesh, sPP);
 physical_constants;
 portstr = '';
 p1 = [mesh.x(1), mesh.y(1), mesh.z(end-16)];
-p2 = [mesh.x(end), mesh.y(end), mesh.z(end-18)];
+p2 = [mesh.x(end), mesh.y(end), mesh.z(end-17)];
 Einc = sPP.Polarization;
 Einc = Einc/norm(Einc);
 Kinc = sPP.Kinc;
@@ -31,7 +31,7 @@ sPP.lEpsilon = lEpsilon;
 sPP.LSPort1 = (p2(3)-sPP.TotalThickness)*sPP.Unit;
 if strcmp(sPP.grounded, 'False');
     p3 = p2;
-    p4 = [mesh.x(1), mesh.y(1), mesh.z(16)];
+    p4 = [mesh.x(1), mesh.y(1), mesh.z(17)];
     [CSX, port{2}] = AddWaveGuidePort(CSX, 10, 2, p3, p4, 2, func_E, func_H, 1, 0);
     % phasefactor has to be multiplied by exp(frequency)
     rEpsilon = 1;
