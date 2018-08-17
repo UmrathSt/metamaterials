@@ -10,9 +10,12 @@ s11_filename = strcat('S11_', sPP.SParameters.ResultFilename);
 s21_filename = strcat('S21_', sPP.SParameters.ResultFilename);
 params = sPP.ParamStr;
 port{1} = calcPort(port{1}, Sim_Path, freq, 'RefImpedance', 376.73, 'SwitchDirection', 1);%, 'RefImpedance', 130
-epsilon_left = sPP.lEpsilon+1j*sPP.lKappa./(2*pi*freq*EPS0);
-nleft = sqrt(epsilon_left);
-s11factor = sPP.LSPort1*2j*pi.*freq.*nleft/C0;
+% propagation in conductive media: E(x,t) = E0 exp(-iwt + i alpha*x)*exp(-beta*x)
+w = 2*pi*freq;
+[alpha, beta] = calcPropagationConstant(w, sPP.lEpsilon, sPP.lKappa);
+fprintf('alpha, beta (left) %.2f, %.2f \n', alpha(1), beta(1));
+epsilon_left = sPP.lEpsilon + 1j*sPP.lKappa./(2*pi*freq*EPS0);
+s11factor = sPP.LSPort1*alpha*1j + beta*sPP.LSPort1;
 S11Phase = exp(2*s11factor);
 
 Z1 = port{1}.ZL_ref;
@@ -20,12 +23,11 @@ s11 = port{1}.uf.ref ./ (port{1}.uf.inc).*S11Phase;
 s21 = zeros(1, length(freq));
 
 if strcmp(sPP.grounded, 'False');
-    epsilon_right = sPP.rEpsilon+1j*sPP.rKappa./(2*pi*freq*EPS0);
-    nright = sqrt(epsilon_right);
-    fprintf(['\n L2=' num2str(sPP.LSPort2) '\n']);
-    fprintf(['\n n=' num2str(nright(1)) '\n']);
-    S21Phase = exp(-sPP.LSPort2*2j*pi.*freq.*real(nright)/C0+s11factor);
-    S21Phase = S21Phase.*exp(-sPP.LSPort2*2*pi.*freq.*imag(nright)/C0);
+    [alpha, beta] = calcPropagationConstant(w, sPP.rEpsilon, sPP.rKappa);
+    fprintf('alpha, beta (right) %.2f, %.2f \n', alpha(1), beta(1));
+    epsilon_right = sPP.rEpsilon + 1j*sPP.rKappa./(2*pi*freq*EPS0);
+    s21factor = -(sPP.LSPort2*alpha*1j + beta*sPP.LSPort2) + s11factor;
+    S21Phase = exp(s21factor);
     port{2} = calcPort(port{2}, Sim_Path, freq, 'SwitchDirection', 1);
     Z2 = port{2}.ZL_ref;
     imp_fact = sqrt(Z1./Z2);

@@ -48,5 +48,7 @@ if strcmp(sGeom.grounded, 'False');
 end;
 
 %
-mesh = AddPML(mesh, PMLdirections);
+if (sGeom.PML == 3);
+    mesh = AddPML(mesh, PMLdirections);
 end;
+end
