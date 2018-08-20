@@ -23,7 +23,7 @@ S11Phase = exp(2*s11factor);
 s11 = port{1}.uf.ref ./ (port{1}.uf.inc).*S11Phase;
 s11 = abs(s11).*exp(-1j.*angle(s11));
 s21 = zeros(1, length(freq));
-
+epsilon_right = 1;
 if strcmp(sPP.grounded, 'False');
     [alpha, beta] = calcPropagationConstant(w, sPP.rEpsilon, sPP.rKappa);
     fprintf('alpha, beta (right) %.2f, %.2f \n', alpha(1), beta(1));

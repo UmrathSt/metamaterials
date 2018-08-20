@@ -55,7 +55,7 @@ else;
     error(['Assumed sGeom.MeshResolution to be either a length-3 matrix or scalar, received: ' type_of_res]);
 end;
 sGeom.maxres = maxres;
-sGeom.z_size = C0/sFDTD.fstart/2/sGeom.Unit;
+sGeom.z_size = C0/sFDTD.fstart/3/sGeom.Unit;
 if ~all(sFDTD.Kinc == [0, 0, -1]);
     error('Currently only perpendicular incidence and propagation in -z direction is implemented via boundary conditions');
 end;
