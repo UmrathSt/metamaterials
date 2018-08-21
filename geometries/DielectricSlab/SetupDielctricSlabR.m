@@ -3,23 +3,14 @@ clc;
 clear;
 physical_constants;
 node = uname.nodename();
-Paths.SimBasePath = '/media/stefan/Daten/openEMS/metamaterials/';
-Paths.ResultBasePath = '/home/stefan_dlr/Arbeit/openEMS/metamaterials/';
-fprintf("\n Running on node %s \n", node);
-if strcmp(node, 'vlinux');
-    Paths.SimBasePath = '/mnt/hgfs/E/openEMS/metamaterials/';
-    Paths.ResultBasePath = '/home/stefan/Arbeit/openEMS/metamaterials/';
-elseif strcmp(node, 'XPS');
-  fprintf('XPS node!!!\n');
-    Paths.SimBasePath = '/home/stefan/Arbeit/metamaterials/Daten/';
-    Paths.ResultBasePath = '/home/stefan/Arbeit/metamaterials/';
-    addpath([Paths.ResultBasePath 'libraries/']);
-end;
+% setup the system paths
 Paths.SimPath = 'DielectricSlab';
 Paths.SimCSX = 'DielectricSlab_geometry.xml';
-
+Paths = configureSystemPaths(Paths, node);
+addpath([Paths.ResultBasePath 'libraries/']);
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
-sim_setup.Paths = Paths;
+sim_setup.Paths = Paths; 
+%-----------------system path setup END---------------------------------------|
 sim_setup.FDTD.Write = 'True';
 sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
