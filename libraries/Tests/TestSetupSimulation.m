@@ -4,12 +4,21 @@ clear;
 addpath('../');
 node = uname.nodename();
 Paths.SimBasePath = '/media/stefan/Daten/openEMS/metamaterials/';
+
+fprintf("\n Running on node %s \n", node);
 if strcmp(node, 'vlinux');
     Paths.SimBasePath = '/mnt/hgfs/E/openEMS/metamaterials/';
+    Paths.ResultBasePath = '/home/stefan/Arbeit/openEMS/metamaterials/';
+elseif strcmp(node, 'XPS');
+  fprintf('XPS node!!!\n');
+    Paths.SimBasePath = '/home/stefan/Arbeit/metamaterials/Daten/';
+    Paths.ResultBasePath = '/home/stefan/Arbeit/metamaterials/';
+    addpath([Paths.ResultBasePath 'libraries/']);
 end;
+
 Paths.SimPath = 'mysim';
 Paths.SimCSX = 'mysim_geometry.xml';
-Paths.ResultBasePath = '/home/stefan/Arbeit/openEMS/metamaterials/';
+
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
@@ -19,6 +28,7 @@ sim_setup.FDTD.fstart = 3e9;
 sim_setup.FDTD.fstop = 30e9;
 sim_setup.FDTD.EndCriteria = 1e-6;
 sim_setup.FDTD.Kinc = [0,0,-1];
+sim_setup.FDTD.PML = 'PML_8';
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.Geometry.Show = 'True';
 sim_setup.Geometry.grounded = 'True';

@@ -1,14 +1,19 @@
 % Setup a dielectric FR4 slab simulation
 clc;
 clear;
-addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
 Paths.SimBasePath = '/media/stefan/Daten/openEMS/metamaterials/';
 Paths.ResultBasePath = '/home/stefan_dlr/Arbeit/openEMS/metamaterials/';
+fprintf("\n Running on node %s \n", node);
 if strcmp(node, 'vlinux');
     Paths.SimBasePath = '/mnt/hgfs/E/openEMS/metamaterials/';
     Paths.ResultBasePath = '/home/stefan/Arbeit/openEMS/metamaterials/';
+elseif strcmp(node, 'XPS');
+  fprintf('XPS node!!!\n');
+    Paths.SimBasePath = '/home/stefan/Arbeit/metamaterials/Daten/';
+    Paths.ResultBasePath = '/home/stefan/Arbeit/metamaterials/';
+    addpath([Paths.ResultBasePath 'libraries/']);
 end;
 Paths.SimPath = 'DielectricSlab';
 Paths.SimCSX = 'DielectricSlab_geometry.xml';
@@ -16,7 +21,7 @@ Paths.SimCSX = 'DielectricSlab_geometry.xml';
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
-sim_setup.FDTD.numThreads = 6;
+sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
 % a too thin PML can result in an oscillation overlaying
 % the real S-Parameters of low frequencies are used in the simulation
@@ -36,7 +41,7 @@ sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-pla
 SParameters.df = 1e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-SParameters.ResultFilename = 'left_double_layer';
+SParameters.ResultFilename = 'right_double_layer';
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -53,14 +58,13 @@ mTop.Name = 'top';
 mTop.Type = 'Material';
 mTop.Properties.Kappa = 10;
 mTop.Properties.Epsilon = 1;
-materials{1} = mFR4;
-materials{2} = mTop;
+
 rMaterial = mFR4;
-sim_setup.PP.lEpsilon = rMaterial.Properties.Epsilon;
-sim_setup.PP.lKappa   = rMaterial.Properties.Kappa;
+sim_setup.PP.rEpsilon = rMaterial.Properties.Epsilon;
+sim_setup.PP.rKappa   = rMaterial.Properties.Kappa;
 rEpsilon = rMaterial.Properties.Epsilon;
 rKappa = rMaterial.Properties.Kappa;
-sim_setup.Geometry.lMaterial = rMaterial;
+sim_setup.Geometry.rMaterial = rMaterial;
 fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 
 %sim_setup.PP.rindex = sqrt(rEpsilon+1j*rKappa/(2*pi*fc*EPS0)); 
@@ -83,7 +87,7 @@ layer1.objects{1} = oTopSlab;
 
 
 sim_setup.used_layers = {layer1};
-sim_setup.used_materials = materials;
+
+sim_setup.used_materials = {mFR4, mTop};
 
 retval = setup_simulation(sim_setup);
-

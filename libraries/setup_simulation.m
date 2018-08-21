@@ -1,4 +1,4 @@
-function [retval] = setup_simulation(sim_setup)
+function [retval] = setup_simulation(sim_setup);
 % Take the structure simulation_setup and create the simulation files 
 % for simulation_setup to simulation_setup{end} in the folder
 % if simulation_setup.Paths.SimPath = ',,,/folder.../'
@@ -43,6 +43,11 @@ sPP.fc = fc;
 sGeom.PML = sFDTD.PML;
 FDTD = SetGaussExcite(FDTD, fc, fw);
 type_of_res = typeinfo(sGeom.MeshResolution);
+
+fprintf(['Trying to write simulation CSX file to:\n' ...
+      Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX]);
+
+
 if strcmp(type_of_res, 'matrix') && length(sGeom.MeshResolution) == 3;
     maxres.x = 3e8/sGeom.MeshResolution(1)/sFDTD.fstop/sGeom.Unit;
     maxres.y = 3e8/sGeom.MeshResolution(2)/sFDTD.fstop/sGeom.Unit;
@@ -124,6 +129,7 @@ if strcmp(sFDTD.Write, 'True');
     elseif exists == 0;
          [status, message, mid] = mkdir([Paths.SimBasePath Paths.SimPath]) % create empty simulation folder
     end;
+    fprintf(['Trying to write simulation CSX file to:\n' Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX]);
     WriteOpenEMS([Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX], FDTD, CSX);
 end;
 % show geometry or not
@@ -141,7 +147,4 @@ end;
 if strcmp(sPP.DoSPararmeterDump, 'True');
     [port] = DoS11Dump(Port, sPP);
 end;
-
-    
-
 end
