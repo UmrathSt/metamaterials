@@ -4,30 +4,28 @@ clear;
 physical_constants;
 addpath('../../libraries');
 node = uname.nodename();
-Paths.SimBasePath = '/media/stefan/Daten/openEMS/metamaterials/';
-Paths.ResultBasePath = '/home/stefan_dlr/Arbeit/openEMS/metamaterials/';
-if strcmp(node, 'vlinux');
-    Paths.SimBasePath = '/mnt/hgfs/E/openEMS/metamaterials/';
-    Paths.ResultBasePath = '/home/stefan/Arbeit/openEMS/metamaterials/';
-end;
+% setup the system paths
 Paths.SimPath = 'XBandAbsorber';
 Paths.SimCSX = 'XBandAbsorber_ungroundedR_geometry.xml';
-
+Paths = configureSystemPaths(Paths, node);
+addpath([Paths.ResultBasePath 'libraries/']);
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
+sim_setup.Paths = Paths; 
+%-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
 sim_setup.FDTD.numThreads = 6;
 sim_setup.FDTD.Run = 'True';
-sim_setup.FDTD.PML = 'PML_12'; % use pml with 8 cells thickness, "2" would be MUR
 sim_setup.FDTD.fstart = 3e9;
 sim_setup.FDTD.fstop = 30e9;
 fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 sim_setup.FDTD.EndCriteria = 5e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
+sim_setup.FDTD.PML = 'PML_8';
 sim_setup.Geometry.Show = 'True';
 sim_setup.Geometry.grounded = 'False';
-sim_setup.Geometry.MeshResolution = [40, 40,30];
+sim_setup.Geometry.MeshResolution = [40, 40,20];
 sim_setup.Geometry.Unit = 1e-3;
 UCDim = 14.25;
 sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-plane
@@ -71,21 +69,17 @@ mFR4.Properties.Epsilon = 4.6;
 % take care of the material right of the structure
 % where transmission takes place
 rMaterial = mFR4;
-rEpsilon = rMaterial.Properties.Epsilon;
-rKappa = rMaterial.Properties.Kappa;
-sim_setup.Geometry.rMaterial = rMaterial;
-sim_setup.PP.rindex = sqrt(rEpsilon+1j*rKappa/(2*pi*fc*EPS0)); 
-%
-
-%materials{1} = mCu;
-materials{1} = mFR4;
-materials{2} = mCuSheet;
-rMaterial = mFR4;
 sim_setup.PP.rEpsilon = rMaterial.Properties.Epsilon;
 sim_setup.PP.rKappa   = rMaterial.Properties.Kappa;
 rEpsilon = rMaterial.Properties.Epsilon;
 rKappa = rMaterial.Properties.Kappa;
 sim_setup.Geometry.rMaterial = rMaterial;
+%
+
+%materials{1} = mCu;
+materials{1} = mFR4;
+materials{2} = mCuSheet;
+
 %materials{4} = mRSheetI;
 %materials{5} = mRSheetO;
 %materials{5} = mRSheetS;

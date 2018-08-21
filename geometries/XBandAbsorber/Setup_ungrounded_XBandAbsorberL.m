@@ -4,16 +4,14 @@ clear;
 physical_constants;
 addpath('../../libraries');
 node = uname.nodename();
-Paths.SimBasePath = '/media/stefan/Daten/openEMS/metamaterials/';
-Paths.ResultBasePath = '/home/stefan_dlr/Arbeit/openEMS/metamaterials/';
-if strcmp(node, 'vlinux');
-    Paths.SimBasePath = '/mnt/hgfs/E/openEMS/metamaterials/';
-    Paths.ResultBasePath = '/home/stefan/Arbeit/openEMS/metamaterials/';
-end;
+% setup the system paths
 Paths.SimPath = 'XBandAbsorber';
 Paths.SimCSX = 'XBandAbsorber_ungroundedL_geometry.xml';
-
+Paths = configureSystemPaths(Paths, node);
+addpath([Paths.ResultBasePath 'libraries/']);
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
+sim_setup.Paths = Paths; 
+%-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
 sim_setup.FDTD.numThreads = 6;
@@ -24,6 +22,7 @@ fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 sim_setup.FDTD.EndCriteria = 5e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
+sim_setup.FDTD.PML = 'PML_8';
 sim_setup.Geometry.Show = 'True';
 sim_setup.Geometry.grounded = 'False';
 sim_setup.Geometry.MeshResolution = [40, 40,20];
@@ -69,11 +68,12 @@ mFR4.Properties.Kappa = 0.05;
 mFR4.Properties.Epsilon = 4.6;
 % take care of the material right of the structure
 % where transmission takes place
-lMaterial = mFR4;
-lEpsilon = lMaterial.Properties.Epsilon;
-lKappa = lMaterial.Properties.Kappa;
-sim_setup.Geometry.lMaterial = lMaterial;
-sim_setup.PP.lindex = sqrt(lEpsilon+1j*lKappa/(2*pi*fc*EPS0)); 
+rMaterial = mFR4;
+sim_setup.PP.lEpsilon = rMaterial.Properties.Epsilon;
+sim_setup.PP.lKappa   = rMaterial.Properties.Kappa;
+rEpsilon = rMaterial.Properties.Epsilon;
+rKappa = rMaterial.Properties.Kappa;
+sim_setup.Geometry.lMaterial = rMaterial;
 %
 
 %materials{1} = mCu;
