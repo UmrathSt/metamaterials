@@ -5,8 +5,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--L", dest="L", type=float)
 parser.add_argument("--eps", dest="eps", type=float)
 parser.add_argument("--kappa", dest="kappa", type=float)
-parser.add_argument("--epsB", dest="epsB", type=float, default=1)
-parser.add_argument("--kappaB", dest="kappaB", type=float, default=56e6)
+parser.add_argument("--epsL", dest="epsL", type=float)
+parser.add_argument("--kappaL", dest="kappaL", type=float)
+parser.add_argument("--epsR", dest="epsR", type=float, default=1)
+parser.add_argument("--kappaR", dest="kappaR", type=float, default=56e6)
 
 args = parser.parse_args()
 
@@ -73,24 +75,23 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
     #mdata = np.loadtxt("S11_f_UCDim_2_lz_3.5_eps_4_tand_1.txt", delimiter=",")
     #S11 = mdata[:,1]+1j*mdata[:,2]
-    fmin, fmax = 1, 30
+    fmin, fmax = 4, 30
     f = np.linspace(fmin, fmax,500)*1e9 
     Nf = len(f) 
-    Z0 = np.ones(Nf)*376.73
+    Z0 = np.ones(Nf)*376.73 
     eps = np.zeros((3, Nf), dtype=np.complex128)
     Zlist = np.zeros((3, Nf), dtype=np.complex128)
-    print("kappaB=%f, epsB=%f" %(args.kappaB, args.epsB))
-    eps[0,:] = 1
+    eps[0,:] = args.epsL + 1j*args.kappaL/(2*np.pi*f*8.85e-12)
     eps[1,:] = args.eps + 1j*args.kappa/(2*np.pi*f*8.85e-12) 
-    eps[2,:] = args.epsB + 1j*args.kappaB/(2*np.pi*f*8.85e-12) 
-    Zlist[:,:] = Z0, Z0/np.sqrt(eps[1,:]), Z0/np.sqrt(eps[2,:])
+    eps[2,:] = args.epsR + 1j*args.kappaR/(2*np.pi*f*8.85e-12) 
+    Zlist[:,:] = Z0/np.sqrt(eps[0,:]), Z0/np.sqrt(eps[1,:]), Z0/np.sqrt(eps[2,:])
     l = np.array([args.L])[:,np.newaxis]
     k = np.sqrt(eps)*2*np.pi*f/3e8
     slabstack = SlabStructure(Zlist, l, k)
     R = slabstack.build_gamma()
     T = slabstack.build_tau()
-    plt.plot(f/1e9, 10*np.log10(np.abs(R)**2),"b-", label="S11, L=50 mm")
-    plt.plot(f/1e9, 10*np.log10(np.abs(T)**2),"r-", label="S21, L=50 mm")
+    plt.plot(f/1e9, (np.abs(R)**2),"b-", label="S11, L=50 mm")
+    plt.plot(f/1e9, (np.abs(T)**2),"r-", label="S21, L=50 mm")
     result = np.zeros((len(f), 5))
     result[:,0] = f
     result[:,1] = np.real(R)
@@ -98,11 +99,11 @@ if __name__ == "__main__":
     result[:,3] = np.real(T)
     result[:,4] = np.imag(T)
     header = "# Scattering and Transmission from a %.2f FR4 slab with eps = %.2f, kappa=%.2f" %(args.L, args.eps, args.kappa)
-    header += " in background medium of eps = %.2f, kappa = %.2f" %(args.epsB, args.kappaB)
+    header += " in background medium of eps = %.2f kappa = %.2f" %(args.epsR, args.kappaR)
     np.savetxt("slab_scattering", result, delimiter=",", header=header)
     plt.legend(loc="best").draw_frame(False)
     plt.xlabel("f [GHz]", fontsize=14)
-    plt.ylabel("$20(\log|S11|),20(\log|S12|)$", fontsize=14)
+    plt.ylabel("$|S11|^2,|S12|^2$", fontsize=14)
     plt.title("Streuung an einer L=%.1f mm dicken Schicht, $\epsilon$=%.1f + $\mathrm{i}$%.2f/(2$\pi f \epsilon_0$)" %(args.L*1000, args.eps, args.kappa))
     plt.xlim([fmin, fmax])
     plt.grid()

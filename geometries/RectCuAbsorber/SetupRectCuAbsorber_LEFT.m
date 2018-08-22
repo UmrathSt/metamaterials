@@ -23,7 +23,7 @@ sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.FDTD.PML = 'PML_8';
 sim_setup.Geometry.Show = 'True';
-sim_setup.Geometry.grounded = 'True';
+sim_setup.Geometry.grounded = 'False';
 sim_setup.Geometry.MeshResolution = [120, 120,200];
 sim_setup.Geometry.Unit = 1e-3;
 UCDim = 4;
@@ -36,7 +36,7 @@ SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
 
 SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_L_' num2str(L) '_lz_' num2str(lz) '_kappa_' num2str(kappa)];
-SParameters.ResultFilename = 'backed';
+SParameters.ResultFilename = 'LEFT';
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -56,11 +56,11 @@ mCuSheet.Properties.Kappa = 56e6;
 materials{1} = mFR4;
 materials{2} = mCuSheet;
 rMaterial = mFR4;
-%rEpsilon = rMaterial.Properties.Epsilon;
-%rKappa = rMaterial.Properties.Kappa;
-%sim_setup.PP.rEpsilon = rMaterial.Properties.Epsilon;
-%sim_setup.PP.rKappa   = rMaterial.Properties.Kappa;
-%sim_setup.Geometry.rMaterial = rMaterial;
+rEpsilon = rMaterial.Properties.Epsilon;
+rKappa = rMaterial.Properties.Kappa;
+sim_setup.PP.lEpsilon = rMaterial.Properties.Epsilon;
+sim_setup.PP.lKappa   = rMaterial.Properties.Kappa;
+sim_setup.Geometry.lMaterial = rMaterial;
 fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 
 %sim_setup.PP.rindex = sqrt(rEpsilon+1j*rKappa/(2*pi*fc*EPS0)); 
@@ -90,7 +90,7 @@ layer1.Name = 'FSS';
 layer1.Thickness = 0;
 layer1.objects{1} = oRect;
 
-sim_setup.used_layers = {layer2,layer1};
+sim_setup.used_layers = {layer1};
 sim_setup.used_materials = materials;
 
 retval = setup_simulation(sim_setup);

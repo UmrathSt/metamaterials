@@ -6,7 +6,9 @@ parser.add_argument("--L1", dest="L1", type=float)
 parser.add_argument("--L2", dest="L2", type=float)
 parser.add_argument("--eps1", dest="eps1", type=float)
 parser.add_argument("--epsL", dest="epsL", type=float)
+parser.add_argument("--kappaL", dest="kappaL", type=float)
 parser.add_argument("--epsR", dest="epsR", type=float)
+parser.add_argument("--kappaR", dest="kappaR", type=float)
 parser.add_argument("--kappa1", dest="kappa1", type=float)
 parser.add_argument("--eps2", dest="eps2", type=float, default=1)
 parser.add_argument("--kappa2", dest="kappa2", type=float, default=56e6)
@@ -75,10 +77,10 @@ if __name__ == "__main__":
     Z0 = np.ones(Nf)*376.73
     eps = np.zeros((4, Nf), dtype=np.complex128)
     Zlist = np.zeros((4, Nf), dtype=np.complex128)
-    eps[0,:] = args.epsL 
+    eps[0,:] = args.epsL + 1j*args.kappaL/(2*np.pi*f*8.85e-12)
     eps[1,:] = args.eps1 + 1j*args.kappa1/(2*np.pi*f*8.85e-12) 
     eps[2,:] = args.eps2 + 1j*args.kappa2/(2*np.pi*f*8.85e-12) 
-    eps[3,:] = args.epsR
+    eps[3,:] = args.epsR + 1j*args.kappaR/(2*np.pi*f*8.85e-12)
     Zlist[:,:] = Z0/np.sqrt(eps[0,:]), Z0/np.sqrt(eps[1,:]), Z0/np.sqrt(eps[2,:]), Z0/np.sqrt(eps[3,:])
     l = np.array([args.L1, args.L2])[:,np.newaxis]
     k = np.sqrt(eps)*2*np.pi*f/3e8
