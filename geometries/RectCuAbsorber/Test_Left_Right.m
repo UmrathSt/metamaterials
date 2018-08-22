@@ -17,5 +17,5 @@ hold on;
 plot(f/1e9, abs(Rs.^2), "b-");
 hold off;
 
-[S11, f, phase] = calculateS11fromSMatrix(f1, f2, 0.5e-3, 2, 0.5);
+[S11, f, phase] = calculateS11fromSMatrix(f1, f2, 1.5e-3, 2, 0.5);
 plot(f/1e9, 20*log10(abs(S11)),"r-")
