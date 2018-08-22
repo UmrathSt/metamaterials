@@ -89,8 +89,8 @@ if __name__ == "__main__":
     slabstack = SlabStructure(Zlist, l, k)
     R = slabstack.build_gamma()
     T = slabstack.build_tau()
-    plt.plot(f/1e9, np.abs(R)**2,"b-", label="S11, L=50 mm")
-    plt.plot(f/1e9, np.abs(T)**2,"r-", label="S21, L=50 mm")
+    plt.plot(f/1e9, 10*np.log10(np.abs(R)**2),"b-", label="S11, L=50 mm")
+    plt.plot(f/1e9, 10*np.log10(np.abs(T)**2),"r-", label="S21, L=50 mm")
     result = np.zeros((len(f), 5))
     result[:,0] = f
     result[:,1] = np.real(R)

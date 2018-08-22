@@ -15,6 +15,8 @@ port{1} = calcPort(port{1}, Sim_Path, freq, 'RefImpedance', Z1, 'SwitchDirection
 % propagation in conductive media: E(x,t) = E0 exp(-iwt + i alpha*x)*exp(-beta*x)
 w = 2*pi*freq;
 [alpha, beta] = calcPropagationConstant(w, sPP.lEpsilon, sPP.lKappa);
+fprintf('Z1(1) = %.2f+i %.2f \n', real(Z1(1)), imag(Z1(1)));
+%fprintf(['The calculated port(1) impedance is Z_ref = %.2f\n'], port{1}.ZL);
 fprintf('alpha, beta (left) %.2f, %.2f \n', alpha(1), beta(1));
 s11factor = sPP.LSPort1*alpha*1j + beta*sPP.LSPort1;
 S11Phase = exp(2*s11factor);
@@ -31,8 +33,9 @@ if strcmp(sPP.grounded, 'False');
     s21factor = -(sPP.LSPort2*alpha*1j + beta*sPP.LSPort2) + s11factor;
     S21Phase = exp(s21factor);
     Z2 = sqrt(MUE0./(EPS0*epsilon_right));
-    port{2} = calcPort(port{2}, Sim_Path, freq, 'SwitchDirection', 1, 'RefImpedance', Z2);
+    port{2} = calcPort(port{2}, Sim_Path, freq, 'RefImpedance', Z2, 'SwitchDirection', 1);
     fprintf('Z2(1) = %.2f+i %.2f \n', real(Z2(1)), imag(Z2(1)));
+    %fprintf(['The calculated port(2) impedance is ZL = %.2f\n'], port{2}.ZL);
     s21 = port{2}.uf.inc./port{1}.uf.inc.*S21Phase;
     s21 = abs(s21).*exp(-1j.*angle(s21));
 end;

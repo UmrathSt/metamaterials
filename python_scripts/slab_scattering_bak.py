@@ -79,14 +79,14 @@ if __name__ == "__main__":
     eps[1,:] = args.eps1 + 1j*args.kappa1/(2*np.pi*f*8.85e-12) 
     eps[2,:] = args.eps2 + 1j*args.kappa2/(2*np.pi*f*8.85e-12) 
     eps[3,:] = args.epsR
-    Zlist[:,:] = Z0, Z0/np.sqrt(eps[1,:]), Z0/np.sqrt(eps[2,:]), Z0*0
+    Zlist[:,:] = Z0/np.sqrt(eps[0,:]), Z0/np.sqrt(eps[1,:]), Z0/np.sqrt(eps[2,:]), Z0/np.sqrt(eps[3,:])
     l = np.array([args.L1, args.L2])[:,np.newaxis]
     k = np.sqrt(eps)*2*np.pi*f/3e8
     slabstack = SlabStructure(Zlist, l, k)
     R = slabstack.build_gamma()
     T = slabstack.build_tau()
     plt.plot(f/1e9, np.abs(R)**2,"b-", label="S11, L=50 mm")
-    #plt.plot(f/1e9, 20*np.log10(np.abs(T)),"r-", label="S21, L=50 mm")
+    plt.plot(f/1e9, np.abs(T)**2,"r-", label="S21, L=50 mm")
     result = np.zeros((len(f), 5))
     result[:,0] = f
     result[:,1] = np.real(R)
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     np.savetxt("slabs", result, delimiter=",", header=header)
     plt.legend(loc="best").draw_frame(False)
     plt.xlabel("f [GHz]", fontsize=14)
-    plt.ylabel("$20(\log|S11|),20(\log|S12|)$", fontsize=14)
+    plt.ylabel("$|S11|^2,|S12|^2$", fontsize=14)
     plt.title("Streuung an einer L=%.1f mm dicken Schicht, $\epsilon$=%.1f + $\mathrm{i}$%.2f/(2$\pi f \epsilon_0$)" %(args.L1*1000, args.eps1, args.kappa1))
     plt.xlim([fmin, fmax])
     plt.grid()
