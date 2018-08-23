@@ -4,15 +4,19 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--L", dest="L", type=str)
+parser.add_argument("--eps", dest="eps", type=str)
+parser.add_argument("--kappa", dest="kappa", type=str)
 args = parser.parse_args()
 
 
 basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
 
 L = args.L
+eps = args.eps
+kappa = args.kappa
 
-dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_4.6_kappa_0.05_"%L+"LEFT", delimiter=",")
-dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_4.6_kappa_0.05_"%L+"RIGHT", delimiter=",")
+dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT", delimiter=",")
+dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT", delimiter=",")
 
 def calcPropagationConstant(w, eps, kappa):
     EPS0 = 8.85e-12
@@ -27,22 +31,30 @@ f = dL[:,0]
 assert np.all(f==dR[:,0])
 w = 2*np.pi*f
 w = w[:,np.newaxis]
-alpha, beta = calcPropagationConstant(w, 4.6, 0.05)
+alpha, beta = calcPropagationConstant(w, float(eps), float(kappa))
 R, T = dR[:,1]+1j*dR[:,2], dR[:,3]+1j*dR[:,4] # dataset with substrate on the right of the FSS
 Rs, Ts = dL[:,1]+1j*dL[:,2], dL[:,3]+1j*dL[:,4] # dataset with substrate on the left of the FSS
 factor = -1j*alpha+beta;
 R, T, Rs, Ts = R[:,np.newaxis], T[:,np.newaxis], Rs[:,np.newaxis], Ts[:,np.newaxis]
 
-LZ = np.linspace(1e-5,1e-2,100)[np.newaxis,:]
+LZ = np.linspace(0,1e-2,100)[np.newaxis,:]
 phase = np.exp(-2*factor*LZ);
 S11 = R - T*Ts*phase/(1+Rs*phase)
+Z = np.abs(S11)**2
 
 [X, Y] = np.meshgrid(LZ.flatten(), f.flatten())
-plt.pcolor(X*1e3, Y/1e9, np.abs(S11)**2, cmap="RdGy")
+fig, ax = plt.subplots(figsize=(10,10))
+cax = ax.pcolor(X*1e3, Y/1e9, Z, cmap="RdGy", alpha=0.25, vmin=0, vmax=1)
+cbar = plt.colorbar(cax,label="Reflection")
+
+contours = plt.contour(X*1e3, Y/1e9, Z,[0.1,0.5], colors="black")
+plt.clabel(contours,inline=True,fontsize=12, manual=[(2,5),(2,7.5),(4,7),(4,11)],
+             fmt="%.1f", inline_spacing=15)
+
+
 plt.xlabel("lz [mm]")
 plt.ylabel("f [GHz]")
-plt.title("Cu patch edge length L=%s mm" %L)
-cbar = plt.colorbar(label="Reflection")
+plt.title("Cu patch edge length L=%s mm, $\epsilon=$ %s + i%s/2$\pi f \epsilon_0$" %(L,eps,kappa))
 
-plt.savefig("CuPatch_L_%s" %L, format="pdf")
-plt.show()
+plt.savefig("CuPatch_L_%s_eps_%s_kappa_%s.pdf" %(L,eps,kappa), format="pdf")
+#plt.show()
