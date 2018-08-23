@@ -1,4 +1,4 @@
-function RectCuAbsorber(type_of_sim, UCDim, lz, L, eps, kappa);
+function RectCuAbsorber(type_of_sim, UCDim, lz, L, eps, kappa,ZMESHRES=40,MESHRES=140);
 % Setup a dielectric FR4 slab simulation
 % intended for the calculation of transmission and reflection coefficients
 % for varying Cu edge-length in order to minimize the reflection of a stacked structure
@@ -28,7 +28,7 @@ sim_setup.Geometry.grounded = 'True';
 if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT');
     sim_setup.Geometry.grounded = 'False';
 end;
-sim_setup.Geometry.MeshResolution = [140, 140,40];
+sim_setup.Geometry.MeshResolution = [MESHRES,MESHRES,ZMESHRES];
 sim_setup.Geometry.Unit = 1e-3;
 
 sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-plane
