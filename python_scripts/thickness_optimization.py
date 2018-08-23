@@ -46,13 +46,13 @@ Z = np.abs(S11)**2
 fig, ax = plt.subplots(figsize=(10,10))
 cax = ax.pcolor(X*1e3, Y/1e9, Z, cmap="RdGy", alpha=0.75, vmin=0, vmax=1)
 cbar = plt.colorbar(cax,label="Reflection")
-
+ax.tick_params('both',labelsize=14)
 contours = plt.contour(X*1e3, Y/1e9, Z,[0.1,0.5], colors="black")
 plt.clabel(contours,inline=True,fontsize=12, manual=[(2,5),(2,7.5),(4,7),(4,11)],
              fmt="%.1f", inline_spacing=15)
 
 
-plt.xlabel("lz [mm]")
+plt.xlabel("lz [mm]",fontsize=14)
 plt.ylabel("f [GHz]")
 plt.title("Cu patch edge length L=%s mm, $\epsilon=$ %s + i%s/2$\pi f \epsilon_0$" %(L,eps,kappa))
 
