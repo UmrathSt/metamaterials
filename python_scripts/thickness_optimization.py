@@ -44,7 +44,7 @@ Z = np.abs(S11)**2
 
 [X, Y] = np.meshgrid(LZ.flatten(), f.flatten())
 fig, ax = plt.subplots(figsize=(10,10))
-cax = ax.pcolor(X*1e3, Y/1e9, Z, cmap="RdGy", alpha=0.25, vmin=0, vmax=1)
+cax = ax.pcolor(X*1e3, Y/1e9, Z, cmap="RdGy", alpha=0.75, vmin=0, vmax=1)
 cbar = plt.colorbar(cax,label="Reflection")
 
 contours = plt.contour(X*1e3, Y/1e9, Z,[0.1,0.5], colors="black")
