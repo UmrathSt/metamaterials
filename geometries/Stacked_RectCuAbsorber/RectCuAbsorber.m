@@ -23,7 +23,7 @@ sim_setup.FDTD.EndCriteria = 5e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.FDTD.PML = 'MUR';
-sim_setup.Geometry.Show = 'True';
+sim_setup.Geometry.Show = 'False';
 sim_setup.Geometry.grounded = 'True';
 if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT');
     sim_setup.Geometry.grounded = 'False';

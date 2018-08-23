@@ -5,7 +5,7 @@ kappa = 0.05;
 eps = 4.6;
 lz = 1;
 UCDim = 4
-L = linspace(2, 3.9,3);
+L = linspace(2, 3.9, 20);
 type_of_sim = {"LEFT", "RIGHT"};
 
 for edgeL = L;
