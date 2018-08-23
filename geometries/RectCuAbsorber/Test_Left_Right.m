@@ -2,7 +2,7 @@ f1 = ['/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/RectCuAbsor
         'S11_RIGHT'];
 f2 = ['/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/RectCuAbsorber/'...
         'S11_LEFT'];
-
+addpath('../../libraries/');
 dR = dlmread(f1, ',', 19,0);
 dL = dlmread(f2, ',', 19,0);
 
