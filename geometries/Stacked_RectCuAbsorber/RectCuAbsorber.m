@@ -17,7 +17,7 @@ sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
 sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
-sim_setup.FDTD.fstart = 4e9;
+sim_setup.FDTD.fstart = 2e9;
 sim_setup.FDTD.fstop = 40e9;
 sim_setup.FDTD.EndCriteria = 5e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
@@ -36,7 +36,7 @@ SParameters.df = 10e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
 
-SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_L_' num2str(L) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim];
+SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_L_' num2str(L) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim '_lz_' num2str(lz)];
 
 TDDump.Status = 'False';
 FDDump.Status = 'False';
