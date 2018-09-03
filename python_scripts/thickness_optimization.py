@@ -9,8 +9,8 @@ parser.add_argument("--kappa", dest="kappa", type=str)
 args = parser.parse_args()
 
 
-basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
 basepath = "/home/stefan/Arbeit/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
+#basepath = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
 
 L = args.L
 eps = args.eps

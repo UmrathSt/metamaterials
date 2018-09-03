@@ -15,7 +15,7 @@ sim_setup.Paths = Paths;
 %-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
-sim_setup.FDTD.numThreads = 4;
+sim_setup.FDTD.numThreads = 5;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 2e9;
 sim_setup.FDTD.fstop = 40e9;
