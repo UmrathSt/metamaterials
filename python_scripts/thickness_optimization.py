@@ -4,20 +4,22 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--L", dest="L", type=str)
+parser.add_argument("--lz", dest="lz", type=str)
 parser.add_argument("--eps", dest="eps", type=str)
 parser.add_argument("--kappa", dest="kappa", type=str)
 args = parser.parse_args()
 
 
 basepath = "/home/stefan/Arbeit/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
-#basepath = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
+basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
 
 L = args.L
 eps = args.eps
 kappa = args.kappa
+lz = args.lz
 
-dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT", delimiter=",")
-dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT", delimiter=",")
+dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT"+"_lz_%s"%(lz), delimiter=",")
+dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT"+"_lz_%s"%(lz), delimiter=",")
 
 def calcPropagationConstant(w, eps, kappa):
     EPS0 = 8.85e-12
