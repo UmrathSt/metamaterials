@@ -1,7 +1,7 @@
 # metamaterials
 Some Octave/Matlab scripts for the convenient definition of 
 metamaterial unit-cells and the computation of their scattering
-propterties with the FDTD solver openEMS
+properties with the FDTD solver openEMS
 ## libraries
 This folder contains *.m files which implement basic functionality
 like adding material information to a CSX structure

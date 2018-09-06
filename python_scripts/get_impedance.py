@@ -18,7 +18,7 @@ Zr, Zl = complex(args.Zr), complex(args.Zl)
 R = d[:,1]+1j*d[:,2] 
 T = d[:,3]+1j*d[:,4]
 
-Zfss = (Zr+np.sqrt(Zr**2-4*T))/T
+Zfss = Zl/T-1/T*np.sqrt(Zl**2-T**2*Zl*Zr) 
 print("args.logscale=", args.logscale)
 if args.logscale == "True":
 	plt.plot(np.log10(d[:,0]/1e9), np.log10(np.real(Zfss)),"r-", label="Re(Z)")

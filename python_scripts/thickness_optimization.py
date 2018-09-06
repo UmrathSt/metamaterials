@@ -11,7 +11,11 @@ args = parser.parse_args()
 
 
 basepath = "/home/stefan/Arbeit/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
+<<<<<<< HEAD
 basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
+=======
+basepath = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
+>>>>>>> 8b7001ca27e1ab572d113634371e79e5a49c9060
 
 L = args.L
 eps = args.eps
