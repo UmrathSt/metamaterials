@@ -11,13 +11,18 @@ args = parser.parse_args()
 
 basepath = "/home/stefan/Arbeit/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
 basepath = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
-
+basepath = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/XBandAbsorber/"
 L = args.L
 eps = args.eps
 kappa = args.kappa
 
-dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT", delimiter=",")
-dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT", delimiter=",")
+#dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT", delimiter=",")
+#dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT", delimiter=",")
+
+dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_140_40", delimiter=",")
+dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_140_40", delimiter=",")
+
+
 
 def calcPropagationConstant(w, eps, kappa):
     EPS0 = 8.85e-12
@@ -40,22 +45,31 @@ R, T, Rs, Ts = R[:,np.newaxis], T[:,np.newaxis], Rs[:,np.newaxis], Ts[:,np.newax
 
 LZ = np.linspace(0,1e-2,100)[np.newaxis,:]
 phase = np.exp(-2*factor*LZ);
-S11 = R - T*Ts*phase/(1+Rs*phase)
+multiple_reflections = - T*Ts*phase/(1+Rs*phase)
+S11 = R + multiple_reflections 
 Z = np.abs(S11)**2
 
-[X, Y] = np.meshgrid(LZ.flatten(), f.flatten())
-fig, ax = plt.subplots(figsize=(10,10))
-cax = ax.pcolor(X*1e3, Y/1e9, Z, cmap="RdGy", alpha=0.75, vmin=0, vmax=1)
-cbar = plt.colorbar(cax,label="Reflection")
-ax.tick_params('both',labelsize=14)
-contours = plt.contour(X*1e3, Y/1e9, Z,[0.1,0.5], colors="black")
-plt.clabel(contours,inline=True,fontsize=12, manual=[(2,5),(2,7.5),(4,7),(4,11)],
-             fmt="%.1f", inline_spacing=15)
-
-
-plt.xlabel("lz [mm]",fontsize=14)
-plt.ylabel("f [GHz]")
-plt.title("Cu patch edge length L=%s mm, $\epsilon=$ %s + i%s/2$\pi f \epsilon_0$" %(L,eps,kappa))
-
-plt.savefig("CuPatch_L_%s_eps_%s_kappa_%s.pdf" %(L,eps,kappa), format="pdf")
+#[X, Y] = np.meshgrid(LZ.flatten(), f.flatten())
+#fig, ax = plt.subplots(figsize=(10,10))
+#cax = ax.pcolor(X*1e3, Y/1e9, Z, cmap="RdGy", alpha=0.75, vmin=0, vmax=1)
+#cbar = plt.colorbar(cax,label="Reflection")
+#ax.tick_params('both',labelsize=14)
+#contours = plt.contour(X*1e3, Y/1e9, Z,[0.1,0.5], colors="black")
+#plt.clabel(contours,inline=True,fontsize=12, manual=[(2,5),(2,7.5),(4,7),(4,11)],
+#             fmt="%.1f", inline_spacing=15)
+#
+#
+#plt.xlabel("lz [mm]",fontsize=14)
+#plt.ylabel("f [GHz]")
+#plt.title("Cu patch edge length L=%s mm, $\epsilon=$ %s + i%s/2$\pi f \epsilon_0$" %(L,eps,kappa))
+#
+#plt.savefig("XBandAbsorber_.pdf", format="pdf")
+to_write = np.zeros((len(f), 5))
+to_write[:,0] = f
+to_write[:,1] = np.real(R[:,0])
+to_write[:,2] = np.imag(R[:,0])
+to_write[:,3] = np.real(multiple_reflections[:,32])
+to_write[:,4] = np.imag(multiple_reflections[:,32])
+comment = 'freqeuncy, Re(R), Im(R), Re(MultipoleRef), Im(MultipleRef)'
+np.savetxt("XBand_Reflections_Phase.txt", to_write, delimiter=",", header=comment)
 #plt.show()
