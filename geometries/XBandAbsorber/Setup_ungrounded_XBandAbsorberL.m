@@ -27,12 +27,15 @@ sim_setup.Geometry.Show = 'True';
 sim_setup.grounded = 'True';
 type_of_sim = 'RIGHT';
 ResXY = 140;
+mitR = 'False';
 lz = 3.2;
 if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT');
     sim_setup.Geometry.grounded = 'False';
+    sim_setup.grounded = 'False';
 end;
 sim_setup.Geometry.MeshResolution = [ResXY, ResXY,40];
 sim_setup.Geometry.Unit = 1e-3;
+sim_setup.Geometry.grounded = sim_setup.grounded;
 UCDim = 14.25;
 sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-plane
 SParameters.df = 1e6;
@@ -41,7 +44,7 @@ SParameters.fstop = sim_setup.FDTD.fstop;
 R30 = 30;
 R300 = 300;
 Rwidth = 0.5;
-SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R1_' num2str(R30) '_R2_' num2str(R300) '_' type_of_sim '_' num2str(ResXY) '_40'];
+SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R1_' num2str(R30) '_R2_' num2str(R300) '_' type_of_sim '_' num2str(ResXY) '_40_mitR_' mitR ];
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -97,10 +100,14 @@ fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 %materials{1} = mCu;
 materials{1} = mFR4;
 materials{2} = mCuSheet;
-materials{3} = mRSheetI;
-materials{4} = mRSheetO;
-if strcmp(type_of_sim, 'EXACT');
+if strcmp(mitR, 'True');
+    materials{3} = mRSheetI;
+    materials{4} = mRSheetO;
+end;
+if strcmp(type_of_sim, 'EXACT') && strcmp(mitR, 'True');
     materials{5} = mCu;
+elseif strcmp(type_of_sim, 'EXACT') && strcmp(mitR, 'False');
+    materials{3} = mCu;
 end;
 
 % End of material definition
@@ -179,15 +186,16 @@ layer3.objects{2} = oFSS2;
 layer3.objects{3} = oFSS3;
 layer3.objects{4} = oFSS4;
 layer3.objects{5} = oRect;
-layer3.objects{6} = oRSheetI;
-layer3.objects{7} = oRSheetI2;
-layer3.objects{8} = oRSheetI3;
-layer3.objects{9} = oRSheetI4;
-layer3.objects{10} = oRSheetO;
-layer3.objects{11} = oRSheetO2;
-layer3.objects{12} = oRSheetO3;
-layer3.objects{13} = oRSheetO4;
-
+if strcmp(mitR, 'True');
+    layer3.objects{6} = oRSheetI;
+    layer3.objects{7} = oRSheetI2;
+    layer3.objects{8} = oRSheetI3;
+    layer3.objects{9} = oRSheetI4;
+    layer3.objects{10} = oRSheetO;
+    layer3.objects{11} = oRSheetO2;
+    layer3.objects{12} = oRSheetO3;
+    layer3.objects{13} = oRSheetO4;
+end;
 
 sim_setup.used_layers = {layer3};
 
