@@ -14,6 +14,8 @@ basepath = "/home/stefan/Arbeit/metamaterials/Results/SParameters/Stacked_RectCu
 basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
 basepath = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/Stacked_RectCuAbsorber/"
 basepath = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/XBandAbsorber/"
+basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/XBandAbsorber/"
+
 L = args.L
 eps = args.eps
 kappa = args.kappa
@@ -24,6 +26,8 @@ lz = args.lz
 
 dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_140_40_mitR_False", delimiter=",")
 dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_140_40_mitR_False", delimiter=",")
+dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_140_40_mitR_True", delimiter=",")
+dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_140_40_mitR_True", delimiter=",")
 
 
 # dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT"+"_lz_%s"%(lz), delimiter=",")
@@ -76,5 +80,5 @@ to_write[:,2] = np.imag(R[:,0])
 to_write[:,3] = np.real(multiple_reflections[:,32])
 to_write[:,4] = np.imag(multiple_reflections[:,32])
 comment = 'freqeuncy, Re(R), Im(R), Re(MultipoleRef), Im(MultipleRef)'
-np.savetxt("XBand_Reflections_Phase_withoutR.txt", to_write, delimiter=",", header=comment)
+np.savetxt("XBand_Reflections_Phase_withR.txt", to_write, delimiter=",", header=comment)
 #plt.show()
