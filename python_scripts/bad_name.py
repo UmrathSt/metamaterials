@@ -37,13 +37,14 @@ w = 2*np.pi*f
 w = w[:,np.newaxis]
 alpha, beta = calcPropagationConstant(w, float(eps), float(kappa))
 R, T = dR[:,1]+1j*dR[:,2], dR[:,3]+1j*dR[:,4] # dataset with substrate on the right of the FSS
-Rs, Ts = dL[:,1]+1j*dL[:,2], dL[:,3]+1j*dL[:,4] # dataset with substrate on the left of the FSS
+epsFR4 = float(eps) + 1j*w*8.85e-12*float(kappa)
+Rss,Rs, Ts = (1-np.sqrt(epsFR4))/(1+np.sqrt(epsFR4)), dl[:,1]+1j*dL[:,2],dL[:,3]+1j*dL[:,4] # dataset with substrate on the left of the FSS
 factor = -1j*alpha+beta;
-R, T, Rs, Ts = R[:,np.newaxis], T[:,np.newaxis], Rs[:,np.newaxis], Ts[:,np.newaxis]
+R, T, Ts, Rs = R[:,np.newaxis], T[:,np.newaxis], Ts[:,np.newaxis], Rs[:,np.newaxis]
 
 LZ = np.linspace(lzmin,lzmax,100)[np.newaxis,:]
 phase = np.exp(-2*factor*LZ);
-multiple_reflections = - T*Ts*phase/(1+Rs*phase)
+multiple_reflections = - T*Ts*Rs*Rssphase/(1+Rs*Rss*phase)
 S11 = R + multiple_reflections 
 Z = np.abs(S11)**2
 
