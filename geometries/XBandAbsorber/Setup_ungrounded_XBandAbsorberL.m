@@ -26,7 +26,7 @@ sim_setup.FDTD.PML = 'MUR';
 sim_setup.Geometry.Show = 'True';
 sim_setup.grounded = 'True';
 type_of_sim = 'EXACT';
-ResXY = 140;
+ResXY = 170;
 innerRectL = 1.77;
 mitR = 'False';
 lz = 3.2;
@@ -42,8 +42,8 @@ sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-pla
 SParameters.df = 1e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-R30 = 30;
-R300 = 300;
+R30 = 40;
+R300 = 350;
 Rwidth = 0.5;
 SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R1_' num2str(R30) '_R2_' num2str(R300) '_' type_of_sim '_' num2str(ResXY) '_40_mitR_' mitR ];
 if strcmp(type_of_sim, 'EXACT');
@@ -62,23 +62,23 @@ mCu.Type = 'Material';
 mCu.Properties.Kappa = 56e6;
 mCuSheet.Name = 'CuSheet';
 mCuSheet.Type = 'ConductingSheet';
-mCuSheet.Properties.Thickness = 18e-6;
+mCuSheet.Properties.Thickness = 35e-6;
 mCuSheet.Properties.Kappa = 56e6;
 Rwidth = 0.5;
 mRSheetI.Properties.Thickness = 100e-6;
-mRSheetI.Properties.Kappa = 0.6/R30/(Rwidth*sim_setup.Geometry.Unit*0.1);
+mRSheetI.Properties.Kappa = 0.3/R30/(Rwidth*sim_setup.Geometry.Unit*0.1);
 mRSheetI.Name = '30_OhmResistor';
 mRSheetI.Type = 'ConductingSheet';
 
 mRSheetO.Properties.Thickness = 100e-6;
-mRSheetO.Properties.Kappa = 0.6/R300/(Rwidth*sim_setup.Geometry.Unit*0.1);
+mRSheetO.Properties.Kappa = 0.3/R300/(Rwidth*sim_setup.Geometry.Unit*0.1);
 mRSheetO.Name = '300_OhmResistor';
 mRSheetO.Type = 'ConductingSheet';
 
 
 mFR4.Name = 'FR4';
 mFR4.Type = 'Material';
-mFR4.Properties.Kappa = 0.05;
+mFR4.Properties.Kappa = 0.04;
 mFR4.Properties.Epsilon = 4.8;
 % take care of the material right of the structure
 % where transmission takes place
@@ -128,20 +128,20 @@ oRSheetI.MName = '30_OhmResistor';
 oRSheetI.Type = 'Polygon';
 oRSheetI.Thickness = 0;
 oRSheetI.Prio = 4;
-oRSheetI.Points = [[0.5;-0.3],[0.5;0.3],[1.2;0.3],[1.2;-0.3]];
+oRSheetI.Points = [[innerRectL/2+0.15;-0.3],[innerRectL/2+0.15;0.3],[innerRectL/2+0.45;0.3],[innerRectL/2+0.45;-0.3]];
 oRSheetO.Name = '300_OhmResistor';
 oRSheetO.MName = '300_OhmResistor';
 oRSheetO.Type = 'Polygon';
 oRSheetO.Thickness = 0;
 oRSheetO.Prio = 4;
-oRSheetO.Points = [[0.5;-0.3],[0.5;0.3],[1.1;0.3],[1.1;-0.3]];
-oRSheetO.Transform = {'Translate', [1.5, 0, 0], 'Rotate_Z', pi/4};
+oRSheetO.Points = [[0.5;-0.15],[0.5;0.15],[1.1;0.15],[1.1;-0.15]];
+oRSheetO.Transform = {'Translate', [1.4, 0, 0], 'Rotate_Z', pi/4};
 oRSheetO2 = oRSheetO;
-oRSheetO2.Transform = {'Translate', [1.5, 0, 0], 'Rotate_Z', pi/4+pi/2};
+oRSheetO2.Transform = {'Translate', [1.4, 0, 0], 'Rotate_Z', pi/4+pi/2};
 oRSheetO3 = oRSheetO;
-oRSheetO3.Transform = {'Translate', [1.5, 0, 0], 'Rotate_Z', pi/4+pi};
+oRSheetO3.Transform = {'Translate', [1.4, 0, 0], 'Rotate_Z', pi/4+pi};
 oRSheetO4 = oRSheetO;
-oRSheetO4.Transform = {'Translate', [1.5, 0, 0], 'Rotate_Z', pi/4+3*pi/2};
+oRSheetO4.Transform = {'Translate', [1.4, 0, 0], 'Rotate_Z', pi/4+3*pi/2};
 
 oRSheetI2 = oRSheetI;
 oRSheetI2.Transform = {'Rotate_Z', pi/2};
