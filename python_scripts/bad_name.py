@@ -20,9 +20,6 @@ dL = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_LEFT_lz_
 dR = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_RIGHT_lz_2", delimiter=",")
 
 
-# dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT"+"_lz_%s"%(lz), delimiter=",")
-# dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT"+"_lz_%s"%(lz), delimiter=",")
-
 def calcPropagationConstant(w, eps, kappa):
     EPS0 = 8.85e-12
     c0 = 2.998e8
@@ -42,7 +39,7 @@ Rs, Ts = dL[:,1]+1j*dL[:,2], dL[:,3]+1j*dL[:,4] # dataset with substrate on the 
 factor = -1j*alpha+beta;
 R, T, Rs, Ts = R[:,np.newaxis], T[:,np.newaxis], Rs[:,np.newaxis], Ts[:,np.newaxis]
 
-LZ = np.linspace(0,1e-2,100)[np.newaxis,:]
+LZ = np.linspace(0.001,0.002,100)[np.newaxis,:]
 phase = np.exp(-2*factor*LZ);
 multiple_reflections = - T*Ts*phase/(1+Rs*phase)
 S11 = R + multiple_reflections 
