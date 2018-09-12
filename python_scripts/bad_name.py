@@ -4,7 +4,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--L", dest="L", type=str)
-parser.add_argument("--lz", dest="lz", type=str)
+parser.add_argument("--lzmin", dest="lzmin", type=float)
+parser.add_argument("--lzmax", dest="lzmax", type=float)
 parser.add_argument("--eps", dest="eps", type=str)
 parser.add_argument("--kappa", dest="kappa", type=str)
 args = parser.parse_args()
@@ -15,7 +16,8 @@ basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/Double
 L = args.L
 eps = args.eps
 kappa = args.kappa
-lz = args.lz
+lzmin = args.lzmin
+lzmax = args.lzmax
 dL = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_LEFT_lz_2", delimiter=",")
 dR = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_RIGHT_lz_2", delimiter=",")
 
@@ -39,7 +41,7 @@ Rs, Ts = dL[:,1]+1j*dL[:,2], dL[:,3]+1j*dL[:,4] # dataset with substrate on the 
 factor = -1j*alpha+beta;
 R, T, Rs, Ts = R[:,np.newaxis], T[:,np.newaxis], Rs[:,np.newaxis], Ts[:,np.newaxis]
 
-LZ = np.linspace(0.001,0.002,100)[np.newaxis,:]
+LZ = np.linspace(lzmin,lzmax,100)[np.newaxis,:]
 phase = np.exp(-2*factor*LZ);
 multiple_reflections = - T*Ts*phase/(1+Rs*phase)
 S11 = R + multiple_reflections 
