@@ -4,7 +4,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--L", dest="L", type=str)
-parser.add_argument("--lz", dest="lz", type=str)
+parser.add_argument("--lzmin", dest="lzmin", type=str)
+parser.add_argument("--lzmax", dest="lzmax", type=str)
 parser.add_argument("--eps", dest="eps", type=str)
 parser.add_argument("--kappa", dest="kappa", type=str)
 args = parser.parse_args()
@@ -19,19 +20,13 @@ basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/XBandA
 L = args.L
 eps = args.eps
 kappa = args.kappa
-lz = args.lz
+lzmax = float(args.lzmax)
+lzmin = float(args.lzmin)
 
-#dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT", delimiter=",")
-#dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT", delimiter=",")
-
-dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_140_40_mitR_False", delimiter=",")
-dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_140_40_mitR_False", delimiter=",")
-dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_140_40_mitR_True", delimiter=",")
-dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_140_40_mitR_True", delimiter=",")
-
-
-# dL = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"LEFT"+"_lz_%s"%(lz), delimiter=",")
-# dR = np.loadtxt(basepath+"S11_UCDim_4_L_%s_eps_%s_kappa_%s_"%(L,eps,kappa)+"RIGHT"+"_lz_%s"%(lz), delimiter=",")
+#dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_140_40_mitR_False", delimiter=",")
+#dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_140_40_mitR_False", delimiter=",")
+dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_170_40_mitR_False", delimiter=",")
+dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_170_40_mitR_False", delimiter=",")
 
 def calcPropagationConstant(w, eps, kappa):
     EPS0 = 8.85e-12
@@ -52,7 +47,7 @@ Rs, Ts = dL[:,1]+1j*dL[:,2], dL[:,3]+1j*dL[:,4] # dataset with substrate on the 
 factor = -1j*alpha+beta;
 R, T, Rs, Ts = R[:,np.newaxis], T[:,np.newaxis], Rs[:,np.newaxis], Ts[:,np.newaxis]
 
-LZ = np.linspace(0,1e-2,100)[np.newaxis,:]
+LZ = np.linspace(lzmin,lzmax,100)[np.newaxis,:]
 phase = np.exp(-2*factor*LZ);
 multiple_reflections = - T*Ts*phase/(1+Rs*phase)
 S11 = R + multiple_reflections 
@@ -77,8 +72,9 @@ to_write = np.zeros((len(f), 5))
 to_write[:,0] = f
 to_write[:,1] = np.real(R[:,0])
 to_write[:,2] = np.imag(R[:,0])
-to_write[:,3] = np.real(multiple_reflections[:,32])
-to_write[:,4] = np.imag(multiple_reflections[:,32])
-comment = 'freqeuncy, Re(R), Im(R), Re(MultipoleRef), Im(MultipleRef)'
-np.savetxt("XBand_Reflections_Phase_withR.txt", to_write, delimiter=",", header=comment)
+to_write[:,3] = np.real(multiple_reflections[:,59])
+to_write[:,4] = np.imag(multiple_reflections[:,59])
+comment = 'XBand absorber with fr4 thickness of %.2f mm thickness \n' %(LZ[0,59]*1000)
+comment += 'freqeuncy, Re(R), Im(R), Re(MultipoleRef), Im(MultipleRef)'
+np.savetxt("XBand_Reflections_Phase_withoutR.txt", to_write, delimiter=",", header=comment)
 #plt.show()
