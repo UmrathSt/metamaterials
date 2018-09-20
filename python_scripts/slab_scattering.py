@@ -1,16 +1,17 @@
 import numpy as np
 import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--L", dest="L", type=float)
-parser.add_argument("--eps", dest="eps", type=float)
-parser.add_argument("--kappa", dest="kappa", type=float)
-parser.add_argument("--epsL", dest="epsL", type=float)
-parser.add_argument("--kappaL", dest="kappaL", type=float)
-parser.add_argument("--epsR", dest="epsR", type=float, default=1)
-parser.add_argument("--kappaR", dest="kappaR", type=float, default=56e6)
-
-args = parser.parse_args()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--L", dest="L", type=float)
+    parser.add_argument("--eps", dest="eps", type=float)
+    parser.add_argument("--kappa", dest="kappa", type=float)
+    parser.add_argument("--epsL", dest="epsL", type=float)
+    parser.add_argument("--kappaL", dest="kappaL", type=float)
+    parser.add_argument("--epsR", dest="epsR", type=float, default=1)
+    parser.add_argument("--kappaR", dest="kappaR", type=float, default=56e6)
+    parser.add_argument("--dB", dest="dB", type=bool, default=False)
+    parser.add_argument("--semilogx", dest="semilogx", type=bool, default=False)
+    args = parser.parse_args()
 
 
 class SlabStructure:
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
     #mdata = np.loadtxt("S11_f_UCDim_2_lz_3.5_eps_4_tand_1.txt", delimiter=",")
     #S11 = mdata[:,1]+1j*mdata[:,2]
-    fmin, fmax = 4, 30
+    fmin, fmax = 0.001, 40
     f = np.linspace(fmin, fmax,500)*1e9 
     Nf = len(f) 
     Z0 = np.ones(Nf)*376.73 
@@ -90,8 +91,14 @@ if __name__ == "__main__":
     slabstack = SlabStructure(Zlist, l, k)
     R = slabstack.build_gamma()
     T = slabstack.build_tau()
-    plt.plot(f/1e9, (np.abs(R)**2),"b-", label="S11, L=50 mm")
-    plt.plot(f/1e9, (np.abs(T)**2),"r-", label="S21, L=50 mm")
+    RR, TT = np.abs(R)**2, np.abs(T)**2
+    if args.dB:
+        RR, TT = 10*np.log10(RR), 10*np.log10(TT)
+    doplot = plt.plot
+    if args.semilogx:
+        doplot = plt.semilogx
+    doplot(f/1e9, RR,"b-", label="S11, L=50 mm")
+    doplot(f/1e9, TT,"r-", label="S21, L=50 mm")
     result = np.zeros((len(f), 5))
     result[:,0] = f
     result[:,1] = np.real(R)
@@ -103,7 +110,10 @@ if __name__ == "__main__":
     np.savetxt("slab_scattering", result, delimiter=",", header=header)
     plt.legend(loc="best").draw_frame(False)
     plt.xlabel("f [GHz]", fontsize=14)
-    plt.ylabel("$|S11|^2,|S12|^2$", fontsize=14)
+    ylabel = "$|S11|^2,|S12|^2$"
+    if args.dB:
+        ylabel += " dB"
+    plt.ylabel(ylabel, fontsize=14)
     plt.title("Streuung an einer L=%.1f mm dicken Schicht, $\epsilon$=%.1f + $\mathrm{i}$%.2f/(2$\pi f \epsilon_0$)" %(args.L*1000, args.eps, args.kappa))
     plt.xlim([fmin, fmax])
     plt.grid()

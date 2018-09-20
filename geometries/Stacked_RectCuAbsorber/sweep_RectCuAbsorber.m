@@ -1,32 +1,18 @@
 clc;
 clear;
 
-kappa = 0.5;
-eps = 2;
-lz = 3;
-UCDim = 4
+
+kappaFR4 = 0.;
+epsFR4 = 1;
+lzRubber = 1.5;
+lzFR4 = 2;
+UCDim = 8;
 L = linspace(3, 3.95, 20);
-type_of_sim = {"RIGHT"};
+type_of_sim = {"LEFTRIGHT"};
 ZMESHRES = 30;
 MESHRES = 300;
-for edgeL = [3.8];
+for edgeL = [6.8];
     for i = 1:length(type_of_sim);
-        RectCuAbsorber(type_of_sim{i}, UCDim, lz, edgeL, eps, kappa,ZMESHRES);
+        RectCuAbsorber(type_of_sim{i}, UCDim, lzRubber, edgeL, epsFR4, kappaFR4,ZMESHRES);
     end;
 end;
-
-type_of_sim = {"EXACT"};
-lz = 1;
-edgeL = 3;
-kappa = 0.5;
-eps = 2;
-for lz = [3];
-ZMESHRES = 40;
-MESHRES = 200;
-for edgeL = [3.8];
-    for i = 1:length(type_of_sim);
-        RectCuAbsorber(type_of_sim{i}, UCDim, lz, edgeL, eps, kappa,ZMESHRES);
-    end;
-end;
-end;
-
