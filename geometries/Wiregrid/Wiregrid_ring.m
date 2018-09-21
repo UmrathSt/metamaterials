@@ -1,4 +1,4 @@
-function Wiregrid_ring(type_of_sim, UCDim, lz, L, eps, kappa,ZMESHRES=40,MESHRES=140);
+function Wiregrid_ring(type_of_sim, UCDim, lz, N, w, L, eps, kappa, with_ring, ZMESHRES=40,MESHRES=140);
 % Setup a wiregrid slab simulation
 % intended for the calculation of transmission and reflection coefficients
 % for varying Cu edge-length in order to minimize the reflection of a stacked structure
@@ -36,7 +36,7 @@ SParameters.df = 10e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
 
-SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_L_' num2str(L) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim '_lz_' num2str(lz)];
+SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_N_' num2str(N) '_w_' num2str(w) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim '_lz_' num2str(lz) '_withRing_' with_ring];
 
 TDDump.Status = 'False';
 FDDump.Status = 'False';
@@ -98,49 +98,52 @@ oFR4Slab.Prio = 2;
 oFR4Slab.Bstart = [-UCDim/2, -UCDim/2, 0];
 oFR4Slab.Bstop = [+UCDim/2, +UCDim/2, oFR4Slab.Thickness];
 
-oRect1.Name = 'CopperRect';
-oRect1.MName = 'CuSheet';
-oRect1.Type = 'Polygon';
-oRect1.Thickness = 0;
-oRect1.Prio = 4;
-oRect1.Points = [[-L/2;UCDim/2],[L/2;UCDim/2],...
-                           [L/2;L/2],[UCDim/2;L/2],...
-                           [UCDim/2;-L/2],[L/2;-L/2],...
-                           [L/2;-UCDim/2],[-L/2;-UCDim/2],...
-                           [-L/2;-L/2],[-UCDim/2;-L/2],...
-                           [-UCDim/2;L/2],[-L/2;L/2],...
-                           [-L/2;UCDim/2]];
-oSQ1.Name = 'CopperRect_outer';
-oSQ1.MName = 'CuSheet';
-oSQ1.Type = 'Polygon';
-oSQ1.Thickness = 0;
-oSQ1.Prio = 4;
-oSQ1.Points = [[L/2;L/2],[UCDim/2;L/2],[UCDim/2;UCDim/2],[L/2;UCDim/2]];
-oSQ2 = oSQ1;
-oSQ3 = oSQ1;
-oSQ4 = oSQ1;
+oGridX.Name = 'CopperGrid';
+oGridX.MName = 'CuSheet';
+oGridX.Type = 'Polygon';
+oGridX.Thickness = 0;
+oGridX.Prio = 4;
+dY = UCDim/N;
+oGridX.Points = [[-UCDim/2;w/2],[UCDim/2;w/2],[UCDim/2;-w/2],[-UCDim/2;-w/2]];
+oGridY = oGridX;
+oGridY.Points(1,:) = oGridX.Points(2,:);
+oGridY.Points(2,:) = oGridX.Points(1,:);
 
-oSQ2.Points = [[-L/2;L/2],[-UCDim/2;L/2],[-UCDim/2;UCDim/2],[-L/2;UCDim/2]];
-oSQ3.Points = [[-L/2;-L/2],[-UCDim/2;-L/2],[-UCDim/2;-UCDim/2],[-L/2;-UCDim/2]];
-oSQ4.Points = [[L/2;-L/2],[UCDim/2;-L/2],[UCDim/2;-UCDim/2],[L/2;-UCDim/2]];
+oRect.Name = 'RectTing';
+oRect.MName = 'CuSheet';
+oRect.Type = 'Polygon';
+oRect.Thickness = 0;
+oRect.Prio = 4; 
+Lg = L/2;
+Ls = L/2-w;
+oRect.Points = [[Ls;Lg],[Lg;Lg],[Lg;-Ls],[Ls;-Ls]];
+for i = 0:3;
+    Rectangles{i+1} = oRect;
+    Rectangles{i+1}.Transform = {'Rotate_Z', pi/2*i};
+end;
+for i = 0:N-1;
+    Grid{2*i+1} = oGridX;
+    Grid{2*i+2}   = oGridY;
+    Grid{2*i+1}.Transform = {'Translate', [0,-UCDim/2+i*2.5,0]};
+    Grid{2*i+2}.Transform =   {'Translate', [-UCDim/2+i*2.5,0,0]};
+end;
 
 layer1.Name = 'FSS';
 layer1.Thickness = 0;
-layer1.objects{1} = oRect1;
+layer1.objects = Grid;
 layer2.Name = 'FR4';
 layer2.Thickness = lz;
 layer2.objects{1} = oFR4Slab;
-layer3.Name = 'FSS2';
+layer3.Name = 'Ring';
 layer3.Thickness = 0;
-layer3.objects{1} = oSQ1;
-layer3.objects{2} = oSQ2;
-layer3.objects{3} = oSQ3;
-layer3.objects{4} = oSQ4;
+layer3.objects = Rectangles;
 
-sim_setup.used_layers = {layer1,layer2,layer3,layer2,layer1};
-if strcmp(type_of_sim, 'EXACT');
-    sim_setup.used_layers = {layer1,layer2,layer3,layer2,layer1};
+
+sim_setup.used_layers = {layer3,layer2,layer2,layer1};
+if strcmp(with_ring, 'False');
+    sim_setup.used_layers = {layer2,layer2,layer1};
 end;
+
 sim_setup.used_materials = materials;
 
 retval = setup_simulation(sim_setup);
