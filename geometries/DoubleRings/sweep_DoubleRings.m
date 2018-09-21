@@ -11,7 +11,7 @@ ZMESHRES = 30;
 MESHRES = 300;
 w = 0.16;
 R = 4.42;
-for lz = [0.5,1,3,4];
+for lz = [4.5, 5, 5.5, 6];
     for i = 1:length(type_of_sim);
         SetupDoubleRings(type_of_sim{i}, UCDim, lz, R, w, eps, kappa,ZMESHRES,MESHRES);
     end;
