@@ -1,12 +1,12 @@
 % Setup the XBand absorber simulation
+function Setup_ungrounded_XBandAbsorberL(UCDim, fr4_lz, epsS, kappaS,type_of_sim, mitR, R30, R300);
 clc;
-clear;
 physical_constants;
 addpath('../../libraries');
 node = uname.nodename();
 % setup the system paths
 Paths.SimPath = 'XBandAbsorber';
-Paths.SimCSX = 'XBandAbsorber_ungroundedL_geometry.xml';
+Paths.SimCSX = ['XBandAbsorber_' type_of_sim '_geometry.xml'];
 Paths = configureSystemPaths(Paths, node);
 addpath([Paths.ResultBasePath 'libraries/']);
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
@@ -24,12 +24,10 @@ sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.FDTD.PML = 'MUR';
 sim_setup.Geometry.Show = 'True';
-sim_setup.grounded = 'True';
-type_of_sim = 'EXACT';
+sim_setup.grounded = 'False';
 ResXY = 170;
 innerRectL = 1.77;
-mitR = 'False';
-lz = 3.2;
+lz = fr4_lz;
 if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT');
     sim_setup.Geometry.grounded = 'False';
     sim_setup.grounded = 'False';
@@ -37,17 +35,14 @@ end;
 sim_setup.Geometry.MeshResolution = [ResXY, ResXY,40];
 sim_setup.Geometry.Unit = 1e-3;
 sim_setup.Geometry.grounded = sim_setup.grounded;
-UCDim = 14.25;
 sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-plane
-SParameters.df = 1e6;
+SParameters.df = 10e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-R30 = 40;
-R300 = 350;
 Rwidth = 0.5;
-SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R1_' num2str(R30) '_R2_' num2str(R300) '_' type_of_sim '_' num2str(ResXY) '_40_mitR_' mitR ];
+SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R1_' num2str(R30) '_R2_' num2str(R300) '_' type_of_sim '_' num2str(ResXY) '_40_mitR_' mitR '_epsS_' num2str(epsS) '_kappaS_' num2str(kappaS) ];
 if strcmp(type_of_sim, 'EXACT');
-    SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R1_' num2str(R30) '_R2_' num2str(R300) '_fr4lz_' num2str(lz) '_' type_of_sim '_' num2str(ResXY) '_40_mitR_' mitR ];
+    SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R1_' num2str(R30) '_R2_' num2str(R300) '_fr4lz_' num2str(lz) '_' type_of_sim '_' num2str(ResXY) '_40_mitR_' mitR '_epsS_' num2str(epsS) '_kappaS_' num2str(kappaS) ];
 end;
 TDDump.Status = 'False';
 FDDump.Status = 'False';
@@ -78,8 +73,8 @@ mRSheetO.Type = 'ConductingSheet';
 
 mFR4.Name = 'FR4';
 mFR4.Type = 'Material';
-mFR4.Properties.Kappa = 0.04;
-mFR4.Properties.Epsilon = 4.8;
+mFR4.Properties.Kappa = kappaS;
+mFR4.Properties.Epsilon = epsS;
 % take care of the material right of the structure
 % where transmission takes place
 rMaterial = mFR4;
@@ -268,9 +263,10 @@ layer3.objects{length(layer3.objects)+1} = oFSSIsland16;
 sim_setup.used_layers = {layer3};
 
 if strcmp(type_of_sim, 'EXACT');
-    sim_setup.used_layers = {layer1, layer2, layer3};
+    sim_setup.used_layers = {layer2, layer3};
 end;
 sim_setup.used_materials = materials;
 
 retval = setup_simulation(sim_setup);
 
+end

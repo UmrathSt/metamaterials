@@ -1,13 +1,13 @@
-function RectCuAbsorber(type_of_sim, UCDim, lz, L, eps, kappa,ZMESHRES=40,MESHRES=140);
-% Setup a dielectric FR4 slab simulation
+function Wiregrid(type_of_sim, UCDim, lz, L, eps, kappa,ZMESHRES=40,MESHRES=140);
+% Setup a wiregrid slab simulation
 % intended for the calculation of transmission and reflection coefficients
 % for varying Cu edge-length in order to minimize the reflection of a stacked structure
 addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
 % setup the system paths
-Paths.SimPath = 'Stacked_RectCuAbsorber';
-Paths.SimCSX = 'RectCuAbsorber_geometry.xml';
+Paths.SimPath = 'WireGrid';
+Paths.SimCSX = 'WireGrid_geometry.xml';
 Paths = configureSystemPaths(Paths, node);
 addpath([Paths.ResultBasePath 'libraries/']);
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
@@ -19,12 +19,12 @@ sim_setup.FDTD.numThreads = 5;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 3e9;
 sim_setup.FDTD.fstop = 40e9;
-sim_setup.FDTD.EndCriteria = 1e-5;
+sim_setup.FDTD.EndCriteria = 1e-6;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.FDTD.PML = 'MUR';
 sim_setup.Geometry.Show = 'True';
-sim_setup.Geometry.grounded = 'True';
+sim_setup.Geometry.grounded = 'False';
 if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT') || strcmp(type_of_sim,'LEFTRIGHT');
     sim_setup.Geometry.grounded = 'False';
 end;
@@ -52,8 +52,8 @@ mFR4.Properties.Kappa = kappa;
 mFR4.Properties.Epsilon = eps;
 mCuSheet.Name = 'CuSheet';
 mCuSheet.Type = 'ConductingSheet';
-mCuSheet.Properties.Thickness = 100e-6;
-mCuSheet.Properties.Kappa = 10e4;
+mCuSheet.Properties.Thickness = 0;
+mCuSheet.Properties.Kappa = 56e6;
 materials{1} = mFR4;
 materials{2} = mCuSheet;
 if strcmp(type_of_sim, 'LEFT');
@@ -103,16 +103,13 @@ oRect1.MName = 'CuSheet';
 oRect1.Type = 'Polygon';
 oRect1.Thickness = 0;
 oRect1.Prio = 4;
-NPoints = 5;
-#Ri = L/2;
-#Ra = UCDim/2;
-#theta = [0,pi/4,3*pi/4,pi];
-#Points(1,:) = [Ri, Ra, Ra,-Ra,-Ra,-Ri,-Ri,Ri,Ri];
-#Points(2,:) = [0,0,Ra,Ra,0,0,Ri,Ri,0];
-Points(1,:) = [-L/2,L/2,L/2,-L/2];
-Points(2,:) = [-L/2,-L/2,L/2,L/2];
-oRect1.Points = Points;
-
+oRect1.Points = [[-L/2;UCDim/2],[L/2;UCDim/2],...
+                           [L/2;L/2],[UCDim/2;L/2],...
+                           [UCDim/2;-L/2],[L/2;-L/2],...
+                           [L/2;-UCDim/2],[-L/2;-UCDim/2],...
+                           [-L/2;-L/2],[-UCDim/2;-L/2],...
+                           [-UCDim/2;L/2],[-L/2;L/2],...
+                           [-L/2;UCDim/2]];
 
 layer1.Name = 'FSS';
 layer1.Thickness = 0;
@@ -123,7 +120,7 @@ layer2.objects{1} = oFR4Slab;
 
 sim_setup.used_layers = {layer1};
 if strcmp(type_of_sim, 'EXACT');
-    sim_setup.used_layers = {layer2,layer1};
+    sim_setup.used_layers = {layer1};
 end;
 sim_setup.used_materials = materials;
 

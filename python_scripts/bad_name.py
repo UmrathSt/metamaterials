@@ -12,14 +12,17 @@ args = parser.parse_args()
 
 
 basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/DoubleRings/"
+basepath = "/home/stefan/Arbeit/openEMS/metamaterials/Results/SParameters/XBandAbsorber/"
 
 L = args.L
 eps = args.eps
 kappa = args.kappa
 lzmin = args.lzmin
 lzmax = args.lzmax
-dL = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_LEFT_lz_2", delimiter=",")
-dR = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_RIGHT_lz_2", delimiter=",")
+#dL = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_LEFT_lz_2", delimiter=",")
+#dR = np.loadtxt(basepath+"S11_UCDim_12_R_4.42_w_0.16_eps_4.6_kappa_0.05_RIGHT_lz_2", delimiter=",")
+dL = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_LEFT_170_40_mitR_True", delimiter=",")
+dR = np.loadtxt(basepath+"S11_UCDim_14.25_R1_30_R2_300_RIGHT_170_40_mitR_True", delimiter=",")
 
 
 def calcPropagationConstant(w, eps, kappa):
@@ -54,8 +57,8 @@ cax = ax.pcolor(X*1e3, Y/1e9, Z, cmap="RdGy", alpha=0.75, vmin=0, vmax=1)
 cbar = plt.colorbar(cax,label="Reflection")
 ax.tick_params('both',labelsize=14)
 contours = plt.contour(X*1e3, Y/1e9, Z,[0.1,0.5], colors="black")
-plt.clabel(contours,inline=True,fontsize=12, manual=[(2,5),(2,7.5),(4,7),(4,11)],
-             fmt="%.1f", inline_spacing=15)
+#plt.clabel(contours,inline=True,fontsize=12, manual=[(2,5),(2,7.5),(4,7),(4,11)],
+             #fmt="%.1f", inline_spacing=15)
 
 
 plt.xlabel("lz [mm]",fontsize=14)
