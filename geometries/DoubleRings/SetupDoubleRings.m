@@ -1,5 +1,5 @@
 % Setup a dielectric FR4 slab simulation
-function SetupDoubleRings(type_of_sim, UCDim, lz, R, w, eps, kappa,ZMESHRES=40,MESHRES=140);
+function SetupDoubleRings(type_of_sim, UCDim, lz, R, w, dTheta, Theta0, eps, kappa,ZMESHRES=40,MESHRES=140);
 addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
@@ -13,7 +13,7 @@ sim_setup.Paths = Paths;
 %-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
-sim_setup.FDTD.numThreads = 6;
+sim_setup.FDTD.numThreads = 5;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 3e9;
 sim_setup.FDTD.fstop = 20e9;
@@ -21,8 +21,8 @@ sim_setup.FDTD.EndCriteria = 5e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.FDTD.PML = 'MUR';
-sim_setup.Geometry.Show = 'False';
-sim_setup.Geometry.grounded = 'False';
+sim_setup.Geometry.Show = 'True';
+sim_setup.Geometry.grounded = 'True';
 if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT') || strcmp(type_of_sim,'LEFTRIGHT');
     sim_setup.Geometry.grounded = 'False';
 end;
@@ -32,7 +32,7 @@ sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-pla
 SParameters.df = 10e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R_' num2str(R) '_w_' num2str(w) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim '_lz_' num2str(lz)];
+SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R_' num2str(R) '_w_' num2str(w) '_dTheta_' num2str(dTheta) '_Th0_' num2str(Theta0) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim '_lz_' num2str(lz)];
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -101,11 +101,11 @@ NPoints = 50;
 dTheta = 2*pi/NPoints;
 Ra = R;
 Ri = R-w;
-theta = linspace(0,2*pi,NPoints);
-Points(1,:) = [Ri, Ra.*cos(theta), Ri.*cos(theta)];
-Points(2,:) = [0, Ra.*sin(theta), -Ri.*sin(theta)];
+theta = linspace(dTheta/2,2*pi-dTheta/2,NPoints);
+Points(1,:) = [Ri*cos(theta(1)), Ra.*cos(theta), Ri.*cos(theta)];
+Points(2,:) = [Ri*sin(theta(1)), Ra.*sin(theta), -Ri.*sin(theta)];
 oFSS1.Points = Points;
-
+oFSS1.Transform = {'Rotate_Z', Theta0};
 layer1.Name = 'FSS';
 layer1.Thickness = 0;
 layer1.objects{1} = oFSS1;

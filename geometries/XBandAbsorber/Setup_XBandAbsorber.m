@@ -14,7 +14,7 @@ sim_setup.Paths = Paths;
 %-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
-sim_setup.FDTD.numThreads = 4;
+sim_setup.FDTD.numThreads = 6;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 3e9;
 sim_setup.FDTD.fstop = 20e9;
@@ -24,7 +24,7 @@ sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.FDTD.PML = 'MUR';
 sim_setup.Geometry.Show = 'True';
-sim_setup.grounded = 'False';
+sim_setup.grounded = 'True';
 ResXY = 170;
 innerRectL = 1.77;
 lz = fr4_lz;
@@ -263,7 +263,7 @@ layer3.objects{length(layer3.objects)+1} = oFSSIsland16;
 sim_setup.used_layers = {layer3};
 
 if strcmp(type_of_sim, 'EXACT');
-    sim_setup.used_layers = {layer2, layer3};
+    sim_setup.used_layers = {layer1, layer2, layer3};
 end;
 sim_setup.used_materials = materials;
 

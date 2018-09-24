@@ -3,9 +3,9 @@ clear;
 
 kappa = 0;
 eps = 1;
-lz = 0.5;
+lz = 0.25;
 UCDim = 10
-L = 9;
+L = 8;
 type_of_sim = {"EXACT"};
 ZMESHRES = 30;
 MESHRES = 300;
