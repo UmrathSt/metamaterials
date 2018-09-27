@@ -15,7 +15,7 @@ sim_setup.Paths = Paths;
 %-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
-sim_setup.FDTD.numThreads = 5;
+sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 3e9;
 sim_setup.FDTD.fstop = 40e9;
@@ -23,7 +23,7 @@ sim_setup.FDTD.EndCriteria = 1e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
 sim_setup.FDTD.PML = 'MUR';
-sim_setup.Geometry.Show = 'True';
+sim_setup.Geometry.Show = 'False';
 sim_setup.Geometry.grounded = 'True';
 if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT') || strcmp(type_of_sim,'LEFTRIGHT');
     sim_setup.Geometry.grounded = 'False';
@@ -104,6 +104,7 @@ oRect1.Type = 'Polygon';
 oRect1.Thickness = 0;
 oRect1.Prio = 4;
 oRect1.Transform = {'Translate', [-UCDim/4,-UCDim/4,0]};
+
 NPoints = 5;
 #Ri = L/2;
 #Ra = UCDim/2;
@@ -113,6 +114,8 @@ NPoints = 5;
 Points(1,:) = [-edgeL/2,edgeL/2,edgeL/2,-edgeL/2];
 Points(2,:) = [-edgeL/2,-edgeL/2,edgeL/2,edgeL/2];
 oRect1.Points = Points;
+oRect2 = oRect1;
+oRect2.Transform = {'Translate', [UCDim/4,UCDim/4,0]};
 
 oEdge1.Name = 'CopperRing';
 oEdge1.MName = 'CuSheet';
@@ -121,16 +124,18 @@ oEdge1.Thickness = 0;
 oEdge1.Prio = 4;
 oEdge1.Points = [[L/2;L/2],[L/2-w;L/2],[L/2-w;-L/2],[L/2;-L/2]];
 
-oRectRingElements = {oEdge1,oEdge1,oEdge1,oEdge1};
+oRectRingElements1 = {oEdge1,oEdge1,oEdge1,oEdge1};
+oRectRingElements2 = oRectRingElements1;
 for i = 0:3;
     alpha = i*pi/2;
-    oRectRingElements{i+1}.Transform = {'Rotate_Z', alpha, 'Translate', [UCDim/4,UCDim/4,0]};
+    oRectRingElements1{i+1}.Transform = {'Rotate_Z', alpha, 'Translate', [-UCDim/4,UCDim/4,0]};
+    oRectRingElements2{i+1}.Transform = {'Rotate_Z', alpha, 'Translate', [UCDim/4,-UCDim/4,0]};
 end;
 
 layer1.Name = 'FSS';
 layer1.Thickness = 0;
-layer1.objects{1} = oRect1;
-layer1.objects = horzcat(layer1.objects,oRectRingElements);
+layer1.objects = {oRect1, oRect2};
+layer1.objects = horzcat(layer1.objects,oRectRingElements1,oRectRingElements2);
 layer2.Name = 'FR4';
 layer2.Thickness = lz;
 layer2.objects{1} = oFR4Slab;

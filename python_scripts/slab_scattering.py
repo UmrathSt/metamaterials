@@ -11,6 +11,10 @@ if __name__ == "__main__":
     parser.add_argument("--kappaR", dest="kappaR", type=float, default=0)
     parser.add_argument("--dB", dest="dB", type=bool, default=False)
     parser.add_argument("--semilogx", dest="semilogx", type=bool, default=False)
+    parser.add_argument("--fstart", dest="fstart", type=float, default=1e9)
+    parser.add_argument("--fstop", dest="fstop", type=float, default=30e9)
+    parser.add_argument("--fsteps", dest="fsteps", type=float, default=100)
+    parser.add_argument("--datadump", dest="datadump",type=str,default=False)
     args = parser.parse_args()
 
 
@@ -76,9 +80,9 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
     #mdata = np.loadtxt("S11_f_UCDim_2_lz_3.5_eps_4_tand_1.txt", delimiter=",")
     #S11 = mdata[:,1]+1j*mdata[:,2]
-    fmin, fmax = 0.001, 40
-    f = np.linspace(fmin, fmax,500)*1e9 
+    f = np.linspace(args.fstart, args.fstop,args.fsteps) 
     Nf = len(f) 
+    fmin, fmax = args.fstart/1e9, args.fstop/1e9
     Z0 = np.ones(Nf)*376.73 
     eps = np.zeros((3, Nf), dtype=np.complex128)
     Zlist = np.zeros((3, Nf), dtype=np.complex128)
@@ -92,30 +96,40 @@ if __name__ == "__main__":
     R = slabstack.build_gamma()
     T = slabstack.build_tau()
     RR, TT = np.abs(R)**2, np.abs(T)**2
+    fig = plt.figure()
+    ax1, ax2 = fig.add_subplot(211), fig.add_subplot(212)
     if args.dB:
         RR, TT = 10*np.log10(RR), 10*np.log10(TT)
     doplot = plt.plot
     if args.semilogx:
-        doplot = plt.semilogx
-    doplot(f/1e9, RR,"b-", label="S11, L=50 mm")
-    doplot(f/1e9, TT,"r-", label="S21, L=50 mm")
+        ax1.semilogx(f/1e9, RR,"b-", label="S11")
+        ax1.semilogx(f/1e9, TT,"r-", label="S21")
+    else:
+        ax1.plot(f/1e9, RR,"b-", label="S11")
+        ax1.plot(f/1e9, TT,"r-", label="S21")
+    ax2.plot(f/1e9, np.angle(R), "b-", label="")
+    ax2.plot(f/1e9, np.angle(T), "r-", label="")
     result = np.zeros((len(f), 5))
     result[:,0] = f
     result[:,1] = np.real(R)
     result[:,2] = np.imag(R)
     result[:,3] = np.real(T)
     result[:,4] = np.imag(T)
-    header = "# Scattering and Transmission from a %.2f FR4 slab with eps = %.2f, kappa=%.2f" %(args.L, args.eps, args.kappa)
-    header += " in background medium of eps = %.2f kappa = %.2f" %(args.epsR, args.kappaR)
-    np.savetxt("slab_scattering", result, delimiter=",", header=header)
-    plt.legend(loc="best").draw_frame(False)
+    if args.datadump:
+      header = "# Scattering and Transmission from a %.2f FR4 slab with eps = %.2f, kappa=%.2f" %(args.L, args.eps, args.kappa)
+      header += " in background medium of eps = %.2f kappa = %.2f" %(args.epsR, args.kappaR)
+      np.savetxt(args.datadump, result, delimiter=",", header=header)
+    ax1.legend(loc="best").draw_frame(False)
     plt.xlabel("f [GHz]", fontsize=14)
     ylabel = "$|S11|^2,|S12|^2$"
     if args.dB:
         ylabel += " dB"
-    plt.ylabel(ylabel, fontsize=14)
-    plt.title("Streuung an einer L=%.1f mm dicken Schicht, $\epsilon$=%.1f + $\mathrm{i}$%.2f/(2$\pi f \epsilon_0$)" %(args.L*1000, args.eps, args.kappa))
-    plt.xlim([fmin, fmax])
-    plt.grid()
+    ax1.set_ylabel(ylabel, fontsize=14)
+    ax1.set_title(r"Streuung an einer L=%.2e mm dicken Schicht, $\epsilon$=%.1f + $\frac{\mathrm{i}%.2f}{2\pi f \epsilon_0}$" %(args.L*1000, args.eps, args.kappa))
+    ax1.set_xlim([fmin, fmax])
+    ax2.set_xlim([fmin, fmax])
+    ax1.grid() 
+    ax2.grid()
+    ax2.set_ylabel("Phase(S11), Phase(S21)")
     plt.savefig("streuung_dielektrische_Schicht.pdf", format="pdf")
     plt.show()

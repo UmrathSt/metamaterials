@@ -21,8 +21,9 @@ kappaMax = arguments.kappaMax
 N = arguments.N 
 decay =  arguments.alpha
 kappas = lambda i: kappaMin - kappaMax*(1-1/(
-                    1+np.exp(-decay*((N-i)/N)**2))-0.5)/(
+                    1+np.exp(-decay*(i)**2))-0.5)/(
                     1/(1+np.exp(-decay))-0.5)
+kappas = lambda i: kappaMin+kappaMax*(1+np.sin(i/10))
 eps = np.zeros((2+N, Nf), dtype=np.complex128)
 Zlist = np.zeros((2+N, Nf), dtype=np.complex128)
 eps[0,:] = 1
@@ -47,4 +48,7 @@ T2 = slabstack2.build_tau()
 plt.semilogx(f, 20*np.log10(np.abs(R2)),"r-", label="single slab")
 plt.semilogx(f, 20*np.log10(np.abs(R)),"b-", label="grading")
 plt.legend(loc="best").draw_frame(False)
+plt.show()
+
+plt.plot(np.arange(N), kappas(np.arange(N)))
 plt.show()

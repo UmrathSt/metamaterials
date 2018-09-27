@@ -99,7 +99,7 @@ oFR4Slab.Name = 'FR4Background';
 oFR4Slab.MName = 'FR4';
 oFR4Slab.Type = 'Box';
 oFR4Slab.Thickness = lz;
-oFR4Slab.Prio = 2;
+oFR4Slab.Prio = 10;
 oFR4Slab.Bstart = [-UCDim/2, -UCDim/2, 0];
 oFR4Slab.Bstop = [+UCDim/2, +UCDim/2, oFR4Slab.Thickness];
 

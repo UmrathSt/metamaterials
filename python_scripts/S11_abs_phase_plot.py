@@ -44,7 +44,7 @@ gbottom = c.insert(graph.graphxy(width=width, height = width/gratio/2,
 gtop = c.insert(graph.graphxy(width=width, height=width/gratio,ypos = gbottom.height+0.5,
                 x = graph.axis.linkedaxis(gbottom.axes["x"],
             axis.painter.regular(gridattrs=[attr.changelist([style.linestyle.dashed,None])])),
-                y = graph.axis.lin(title="$|$%s$|^2$"%args.ylabel,max=0,
+                y = graph.axis.lin(title="$20\log|$%s$|^2$"%args.ylabel,max=max(np.max(S11_dB),0),
                     painter=ygridpainter)
                 )
              )

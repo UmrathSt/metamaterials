@@ -45,7 +45,7 @@ FDTD = SetGaussExcite(FDTD, fc, fw);
 type_of_res = typeinfo(sGeom.MeshResolution);
 
 fprintf(['Trying to write simulation CSX file to:\n' ...
-      Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX]);
+      Paths.SimBasePath Paths.SimPath '/' Paths.SimCSX '\n']);
 
 
 if strcmp(type_of_res, 'matrix') && length(sGeom.MeshResolution) == 3;

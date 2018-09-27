@@ -23,7 +23,7 @@ try;
     lEpsilon = sPP.lEpsilon;
     lKappa   = sPP.lKappa;
     portstr = horzcat(portstr,['# Adding material with Epsilon = ' num2str(lEpsilon) ...
-                            ' and ' num2str(lKappa) ' on the exitation side of the structure \n']);  
+                            ' and Kappa = ' num2str(lKappa) ' on the exitation side of the structure \n']);  
     catch lasterror;
 end;
 sPP.lKappa = lKappa;
