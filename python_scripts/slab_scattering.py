@@ -3,7 +3,7 @@ import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--L", dest="L", type=float)
-    parser.add_argument("--eps", dest="eps", type=float)
+    parser.add_argument("--eps", dest="eps", type=float, default=1)
     parser.add_argument("--kappa", dest="kappa", type=float)
     parser.add_argument("--epsL", dest="epsL", type=float, default=1)
     parser.add_argument("--kappaL", dest="kappaL", type=float,default=0)

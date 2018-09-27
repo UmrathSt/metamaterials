@@ -14,9 +14,9 @@ sim_setup.Paths = Paths;
 %-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
-sim_setup.FDTD.numThreads = 6;
+sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
-sim_setup.FDTD.fstart = 3e9;
+sim_setup.FDTD.fstart = 4e9;
 sim_setup.FDTD.fstop = 20e9;
 fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 sim_setup.FDTD.EndCriteria = 5e-6;
@@ -32,7 +32,7 @@ if strcmp(type_of_sim,'LEFT') || strcmp(type_of_sim,'RIGHT');
     sim_setup.Geometry.grounded = 'False';
     sim_setup.grounded = 'False';
 end;
-sim_setup.Geometry.MeshResolution = [ResXY, ResXY,40];
+sim_setup.Geometry.MeshResolution = [ResXY, ResXY,80];
 sim_setup.Geometry.Unit = 1e-3;
 sim_setup.Geometry.grounded = sim_setup.grounded;
 sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-plane

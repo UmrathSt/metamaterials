@@ -9,8 +9,8 @@ UCDim = 16;
 L = 4;
 w = 1;
 type_of_sim = "EXACT";
-ZMESHRES = 30;
-MESHRES = 30;
+ZMESHRES = 80;
+MESHRES = 40;
 edgeL = 7;
 
 for L = linspace(2*w,L,9)
