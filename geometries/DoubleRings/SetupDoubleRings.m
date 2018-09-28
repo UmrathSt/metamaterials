@@ -4,7 +4,7 @@ addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
 % setup the system paths
-Paths.SimPath = 'DoubleRings';
+Paths.SimPath = ['DoubleRings/UCDim_' num2str(UCDim)];
 Paths.SimCSX = 'DoubleRings_geometry.xml';
 Paths = configureSystemPaths(Paths, node);
 addpath([Paths.ResultBasePath 'libraries/']);
@@ -32,7 +32,7 @@ sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-pla
 SParameters.df = 10e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_R_' num2str(R) '_w_' num2str(w) '_dTheta_' num2str(dTheta) '_Th0_' num2str(Theta0) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim '_lz_' num2str(lz)];
+SParameters.ResultFilename = ['_R_' num2str(R) '_w_' num2str(w) '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_' type_of_sim '_lz_' num2str(lz)];
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -47,7 +47,7 @@ mFR4.Properties.Kappa = 0.05;
 mFR4.Properties.Epsilon = 4.6;
 mCuSheet.Name = 'CuSheet';
 mCuSheet.Type = 'ConductingSheet';
-mCuSheet.Properties.Thickness = 50e-6;
+mCuSheet.Properties.Thickness = 35e-6;
 mCuSheet.Properties.Kappa = 56e6;
 materials{1} = mFR4;
 materials{2} = mCuSheet;
