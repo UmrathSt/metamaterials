@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import numpy as np
 from scipy.optimize import leastsq
 import argparse
@@ -39,4 +40,11 @@ def reflection_integral(R):
 
 R = leastsq(reflection_integral, x0=[args.R])[0]
 print("obtained LSQ resistance: ", R)
+Zopt = fit_func(R)
+R = (Zopt-376)/(Zopt+376)
+plt.plot(f/1e9, 1-np.abs(R)**2, "k-",linewidth=2)
+plt.xlabel("f [GHz]")
+plt.ylabel("Absorbed power")
+plt.ylim([0,1])
+plt.show()
 
