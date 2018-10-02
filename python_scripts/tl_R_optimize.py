@@ -5,6 +5,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--eps", dest="eps",type=float)
 parser.add_argument("--D", dest="D",type=float)
 parser.add_argument("--L", dest="L",type=float)
+parser.add_argument("--R", dest="R",type=float)
 parser.add_argument("--C", dest="C",type=float)
 parser.add_argument("--tand", dest="tand",type=float)
 parser.add_argument("--fsteps", dest="fsteps",type=int)
@@ -36,6 +37,6 @@ def reflection_integral(R):
     Rfit = (Zfit-376)/(Zfit+376)
     return np.trapz(np.abs(Rfit), f)/(f[-1]-f[0])
 
-R = leastsq(reflection_integral, x0=[10])[0]
+R = leastsq(reflection_integral, x0=[args.R])[0]
 print("obtained LSQ resistance: ", R)
 
