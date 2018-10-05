@@ -11,6 +11,7 @@ parser.add_argument("--kappaSubst", dest="kappaSubst", type=float,default=56e6)
 parser.add_argument("--Lsheet", dest="Lsheet", type=float)
 parser.add_argument("--Lsubst", dest="Lsubst", type=float)
 parser.add_argument("--dumpfile", dest="dumpfile", type=str, default=False)
+parser.add_argument("--hideS21", dest="hideS21", type=bool, default=False)
 args = parser.parse_args()
 
 fmin, fmax = 4, 20
@@ -38,10 +39,10 @@ R = slabstack1.build_gamma()
 T = slabstack1.build_tau()
 fig = plt.figure()
 ax1, ax2 = fig.add_subplot(211), fig.add_subplot(212)
-
-ax1.plot(f/1e9, 20*np.log10(np.abs(T)),"r-", label="S21")
+if not(args.hideS21):
+    ax2.plot(f/1e9, 180/np.pi*np.angle(T),"r-", label="S21")
+    ax1.plot(f/1e9, 20*np.log10(np.abs(T)),"r-", label="S21")
 ax1.plot(f/1e9, 20*np.log10(np.abs(R)),"b-", label="S11")
-ax2.plot(f/1e9, 180/np.pi*np.angle(T),"r-", label="S21")
 ax2.plot(f/1e9, 180/np.pi*np.angle(R),"b-", label="S11")
 ax1.set_ylabel("$20\log|S_{11}|^2$")
 ax1.legend(loc="best").draw_frame(False)
