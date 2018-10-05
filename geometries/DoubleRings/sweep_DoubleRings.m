@@ -15,8 +15,8 @@ R = 4.5;
 dTheta = 0;
 Theta0 = 0;
 for UCDim = [10];#,9,8,7,6,5];
-    for R = UCDim/2-(0:3)*deltaX-0.15;
-        for w = (11:min(idivide(R,deltaX), 20))*deltaX
+    for R =[4.2,4.4];#CDim/2-(0:3)*deltaX-0.15;
+        for w = (1:min(idivide(R,deltaX), 20))*deltaX
             SetupDoubleRings(type_of_sim, UCDim, lz, R, w, dTheta, Theta0, eps, kappa,ZMESHRES,MESHRES);
             %fprintf('UCDim=%.1f, R=%.2f, w=%.2f\n', UCDim, R, w);
         end;
