@@ -1,11 +1,10 @@
 % Setup a dielectric FR4 slab simulation
-clc;
-clear;
+function SetupRectCuAbsorber(UCDim, L, lz, kappa, eps, ZMESHRES=60,MESHRES=350);
 addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
 % setup the system paths
-Paths.SimPath = 'RectCuAbsorber';
+Paths.SimPath = ['RectCuAbsorber/UCDim_' num2str(UCDim) '/lz_' num2str(lz)];
 Paths.SimCSX = 'RectCuAbsorber_geometry.xml';
 Paths = configureSystemPaths(Paths, node);
 addpath([Paths.ResultBasePath 'libraries/']);
@@ -17,27 +16,23 @@ sim_setup.FDTD.Write = 'True';
 sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 4e9;
-sim_setup.FDTD.fstop = 30e9;
+sim_setup.FDTD.fstop = 40e9;
 sim_setup.FDTD.EndCriteria = 5e-5;
 sim_setup.FDTD.Kinc = [0,0,-1];
 sim_setup.FDTD.Polarization = [1,0,0];
-sim_setup.FDTD.PML = 'PML_8';
+sim_setup.FDTD.PML = 'MUR';
 sim_setup.Geometry.Show = 'True';
 sim_setup.Geometry.grounded = 'True';
-sim_setup.Geometry.MeshResolution = [120, 120,200];
+sim_setup.Geometry.MeshResolution = [MESHRES, MESHRES, ZMESHRES];
 sim_setup.Geometry.Unit = 1e-3;
-UCDim = 4;
-L = 3.75;
-lz = 0.5;
-kappa = 0.5;
-eps = 4.6;
+
 sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-plane
 SParameters.df = 10e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
 
-SParameters.ResultFilename = ['UCDim_' num2str(UCDim) '_L_' num2str(L) '_lz_' num2str(lz) '_kappa_' num2str(kappa)];
-SParameters.ResultFilename = 'backed';
+SParameters.ResultFilename = ['_L_' num2str(L) '_eps_' num2str(eps) '_kappa_' num2str(kappa)];
+
 TDDump.Status = 'False';
 FDDump.Status = 'False';
 PP.DoSPararmeterDump = 'True';
@@ -52,7 +47,7 @@ mFR4.Properties.Kappa = kappa;
 mFR4.Properties.Epsilon = eps;
 mCuSheet.Name = 'CuSheet';
 mCuSheet.Type = 'ConductingSheet';
-mCuSheet.Properties.Thickness = 18e-6;
+mCuSheet.Properties.Thickness = 35e-6;
 mCuSheet.Properties.Kappa = 56e6;
 materials{1} = mFR4;
 materials{2} = mCuSheet;
