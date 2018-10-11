@@ -1,11 +1,11 @@
 % Setup a dielectric FR4 slab simulation
-function SetupRectCuAbsorber(UCDim, L, lz, kappa, eps, ZMESHRES=60,MESHRES=350);
+function StackedSetupRectCuAbsorber(UCDim, L, lz, kappa, eps, ZMESHRES=60,MESHRES=350);
 addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
 % setup the system paths
-Paths.SimPath = ['RectCuAbsorber/UCDim_' num2str(UCDim) '/lz_' num2str(lz)];
-Paths.SimCSX = 'RectCuAbsorber_geometry.xml';
+Paths.SimPath = ['StackedRectCuAbsorber/UCDim_' num2str(UCDim) '/lz_' num2str(lz)];
+Paths.SimCSX = 'StackedRectCuAbsorber_geometry.xml';
 Paths = configureSystemPaths(Paths, node);
 addpath([Paths.ResultBasePath 'libraries/']);
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
@@ -30,8 +30,13 @@ sim_setup.Geometry.UCDim = [UCDim, UCDim]; % size of the unit-cell in the xy-pla
 SParameters.df = 10e6;
 SParameters.fstart = sim_setup.FDTD.fstart;
 SParameters.fstop = sim_setup.FDTD.fstop;
-
-SParameters.ResultFilename = ['_L_' num2str(L) '_eps_' num2str(eps) '_kappa_' num2str(kappa)];
+Lst = '';
+idx = 0;
+for l = L;
+    Lst = horzcat(Lst,['L' num2str(idx) '_' num2str(l) '_']);
+    idx = idx+1;
+end;
+SParameters.ResultFilename = [Lst '_eps_' num2str(eps) '_kappa_' num2str(kappa)];
 
 TDDump.Status = 'False';
 FDDump.Status = 'False';
@@ -76,17 +81,32 @@ oRect.MName = 'CuSheet';
 oRect.Type = 'Polygon';
 oRect.Thickness = 0;
 oRect.Prio = 4;
-oRect.Points = [[-L/2;-L/2],[L/2;-L/2],[L/2;L/2],[-L/2;L/2]];
+
+oFSS = {};
+for i = 1:length(L);
+    oR = oRect;
+    Ltmp = L(i);
+    oR.Points = [[-Ltmp/2;-Ltmp/2],[Ltmp/2;-Ltmp/2],[Ltmp/2;Ltmp/2],[-Ltmp/2;Ltmp/2]];
+    oFSS = horzcat({oR}, oFSS);
+end;
 
 
-layer2.Name = 'FR4Substrate';
-layer2.Thickness = oFR4Slab.Thickness;
-layer2.objects{1} = oFR4Slab;
-layer1.Name = 'FSS';
-layer1.Thickness = 0;
-layer1.objects{1} = oRect;
 
-sim_setup.used_layers = {layer2,layer1};
+SubstrateLayer.Name = 'FR4Substrate';
+SubstrateLayer.Thickness = oFR4Slab.Thickness;
+SubstrateLayer.objects{1} = oFR4Slab;
+FSSLayer.Name = 'FSS';
+FSSLayer.Thickness = 0;
+FSSLayer.objects{1} = oRect;
+layers = {};
+for i = 1:length(L);
+    r = oFSS{i};
+    fssL = FSSLayer;
+    fssL.objects{1} = r;
+    layers = horzcat({SubstrateLayer,fssL}, layers);
+end; 
+
+sim_setup.used_layers = layers;
 sim_setup.used_materials = materials;
 
 retval = setup_simulation(sim_setup);
