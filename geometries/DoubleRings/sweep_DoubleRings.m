@@ -7,8 +7,10 @@ lz = 2;
 UCDim = 20;
 L = linspace(3, 3.95, 20);
 type_of_sim = 'EXACT';
-ZMESHRES = 40;
-MESHRES = 100;
+
+ZMESHRES = 30;
+MESHRES = 250;
+
 w = 1;
 deltaX = 0.1;
 
