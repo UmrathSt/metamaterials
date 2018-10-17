@@ -16,13 +16,14 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-def fit_func(R, L, C, f, D, eps, tand):
+def fit_func(coeffs, f, D, eps, tand):
     """ A Simple RLC series circuit in
         parallel to the analytically known
         impedance of a grounded dielectric
         slab of thickness D
     """
     w = 2*np.pi*f
+    R, L, C = coeffs
     epsilon = eps*(1+tand*1j)
     Zd = -376j/np.sqrt(epsilon)*np.tan(w/3e8*np.sqrt(epsilon)*D)
     Zfss = R - 1j*w*L + 1j/(w*C)
@@ -30,12 +31,18 @@ def fit_func(R, L, C, f, D, eps, tand):
     Zges = (1/Zfss+1/Ztml)**(-1)
     Rges = (Zges-376)/(Zges+376)
     return Zges
-def residuals(coeffs, S11num, f, D, eps, tand):
-    R, L, C = coeffs
-    Zges = fit_func(R, L, C, f, D, eps, tand)
+
+def Rresiduals(coeffs, S11num, f, D, eps, tand):
+    Zges = fit_func(coeffs, f, D, eps, tand)
     Rges = (Zges-376)/(376+Zges)
     S11num = S11num
     val = np.abs(Rges.real-S11num.real)+np.abs(Rges.imag-S11num.imag)
+    return val
+
+def Zresiduals(coeffs, S11num, f, D, eps, tand):
+    Zges = fit_func(coeffs, f, D, eps, tand)
+    Znum = 376*(1-S11num)/(1+S11num)
+    val = np.abs(Zges.real-Znum.real)+np.abs(Zges.imag-Znum.imag)
     return val
 
 if __name__ == "__main__":
@@ -46,9 +53,9 @@ if __name__ == "__main__":
     I = (np.abs(f-fmin)).argmin()
     J = (np.abs(f-fmax)).argmin()
     f, S11 = data[I:J,0], data[I:J,1]+1j*data[I:J,2]
-    coeffs = leastsq(residuals, x0=x0, args=(S11, f, args.D, args.eps, args.tand))[0]
+    coeffs = leastsq(Rresiduals, x0=x0, args=(S11, f, args.D, args.eps, args.tand))[0]
     print(coeffs)
-    Zfit = fit_func(*coeffs, f, args.D, args.eps, args.tand)
+    Zfit = fit_func(coeffs, f, args.D, args.eps, args.tand)
     Rfit = (Zfit-376.7)/(Zfit+376.7)
     Znum = 376*(1+S11)/(1-S11)
     plt.plot(f/1e9, Rfit.real, "r-", label="Re(Rfit)")
