@@ -41,7 +41,7 @@ def Rresiduals(coeffs, S11num, f, D, eps, tand):
 
 def Zresiduals(coeffs, S11num, f, D, eps, tand):
     Zges = fit_func(coeffs, f, D, eps, tand)
-    Znum = 376*(1-S11num)/(1+S11num)
+    Znum = 376*(1+S11num)/(1-S11num)
     val = np.abs(Zges.real-Znum.real)+np.abs(Zges.imag-Znum.imag)
     return val
 
