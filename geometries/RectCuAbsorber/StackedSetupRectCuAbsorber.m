@@ -36,7 +36,7 @@ for l = L;
     Lst = horzcat(Lst,['L' num2str(idx) '_' num2str(l) '_']);
     idx = idx+1;
 end;
-SParameters.ResultFilename = [Lst '_eps_' num2str(eps) '_kappa_' num2str(kappa)];
+SParameters.ResultFilename = [Lst '_eps_' num2str(eps) '_kappa_' num2str(kappa) '_Zres_' num2str(ZMESHRES)];
 
 TDDump.Status = 'False';
 FDDump.Status = 'False';
