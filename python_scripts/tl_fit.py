@@ -16,37 +16,23 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-def find_minima(R, f, bound,widths=[50]):
-    """ Find all indices K for which the values in R are less than an
-        upper bound and return 3xN numpy array containing [I, K, J]
-        with K beeing the index where the R[K] = min(R[I:J])
-        Takes:
-        - R (np.ndarray): absolute value of reflection coefficient
-        - f (np.ndarray) with shape of R: frequency
-        - bound (float): 
-        - widths (list of floats): wavelet used for smoothing noise
-        Returns:
-        - Nx3 np.ndarray
+def find_minima(R, f, bound, widths=[50]):
+    """ Find all indices i, in R which correspond to frequencies in 
+        f[i] for which R[i] < bound and return a list with the length 
+        of found minima together with half the indices j<i and k>i 
+        which bound the frequency range in which the found minimum is 
+        the local minimum of R.
     """
-    indices = signal.find_peaks_cwt(1/aR, widths)
-    w = np.where(aR[indices] < 0.3)
+    indices = signal.find_peaks_cwt(1/R, widths)
+    w = np.where(R[indices] < bound)
     IDX_cand = indices[w]
-    f_candidates = f[IDX_cand]
-    interval_list = []
-    I = 0
-    for idx, i in enumerate(IDX_cand):
-        Minimum = i
-        try:
-            imax = IDX_cand[idx+1]
-        except IndexError:
-            imax = -1
-        J = (Minimum+imax)//2
-        interval_list.append([I,Minimum,J])
-        I = J
-    K = IDX_cand[-1]
-    J = -1
-    interval_list.append([I,K,J])
-    return interval_list
+    result_list = np.zeros((len(IDX_cand),3),dtype=np.int)
+    result_list[:,1] = IDX_cand-1
+    result_list[-1,-1] = -1
+    result_list[0:-1,2] = (result_list[1:,1] + result_list[0:-1,1])//2
+    result_list[1:,0] = result_list[0:-1,2]
+    
+    return result_list
 
 def fit_func(coeffs, f, D, eps, tand):
     """ A Simple RLC series circuit in
