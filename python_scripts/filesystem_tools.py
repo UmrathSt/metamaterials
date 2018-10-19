@@ -38,7 +38,12 @@ def parameter_extraction(string, pname, ptype, separator):
     assert(type(ptype) == type)
     split_s = string.split(pname+separator)[1] 
     result = split_s.split("/")[0]
-    return ptype(result)
+    try:
+        res = ptype(result)
+        return res
+    except ValueError:
+        res = result.split("_")[0]
+        return ptype(res)
 
 def dir_parameter_extraction(directory, pname, ptype, separator):
     """ Do parameter extraction of function "parameter_extraction"
@@ -64,6 +69,8 @@ def dir_parameter_extraction(directory, pname, ptype, separator):
     return ures
 
 if __name__ == "__main__":
-    param = dir_parameter_extraction("/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/RectCuAbsorber/UCDim_7.2/"
+    lz = dir_parameter_extraction("/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/RectCuAbsorber/UCDim_7.2/"
                                     , "lz", float, "_")
-    print(param)
+    print(lz)
+    L =  dir_parameter_extraction("/home/stefan_dlr/Arbeit/openEMS/metamaterials/Results/SParameters/RectCuAbsorber/UCDim_7.2/", "L", float,"_")
+    print(L)
