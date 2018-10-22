@@ -38,7 +38,9 @@ def parameter_extraction(string, pname, ptype, separator):
     for s in [string, pname, separator]:
         assert type(s) == str
     assert(type(ptype) == type)
-    split_s = string.split(pname+separator)[1] 
+    split_s = string.split(pname+separator)
+    print("the string I am trying to split is: \n", split_s)
+    split_s = split_s[1] 
     result = split_s.split("/")[0]
     try:
         res = ptype(result)
@@ -47,11 +49,11 @@ def parameter_extraction(string, pname, ptype, separator):
         res = result.split("_")[0]
         return ptype(res)
 
-def dir_parameter_extraction(directory, pname, ptype, separator):
+def flist_parameter_extraction(flist, pname, ptype, separator):
     """ Do parameter extraction of function "parameter_extraction"
         for all files contained in a directory
         Takes:
-            - directory (string): the directory to search
+            - flist (a list of strings): the filenames to search
             - pname (string): the name of the parameter which is to
                               be extracted
             - ptype (type): the type of the extracted parameter type
@@ -62,8 +64,7 @@ def dir_parameter_extraction(directory, pname, ptype, separator):
             extracted values for the parameter 
     """
     results = []
-    files = fileList(directory,"","")
-    for fname in files:
+    for fname in flist:
         results.append(parameter_extraction(fname, pname, ptype, separator))
     sres = set(results)
     ures = list(sres)

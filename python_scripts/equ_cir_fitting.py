@@ -2,6 +2,7 @@ import numpy as np
 from math import sqrt
 from scipy.optimize import leastsq
 from matplotlib import pyplot as plt
+from scipy import signal
 import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -17,7 +18,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-Z0 = Z0.73 # vacuum impedance
+Z0 = 273.73 # vacuum impedance
 
 def find_minima(R, f, bound, widths=[50]):
     """ Find all indices i for which R[i], corresponding to the frequency
@@ -87,7 +88,7 @@ if __name__ == "__main__":
     coeffs = leastsq(Rresiduals, x0=x0, args=(S11, f, args.D, args.eps, args.tand))[0]
     print(coeffs)
     Zfit = fit_func(coeffs, f, args.D, args.eps, args.tand)
-    Rfit = (Zfit-Z0.7)/(Zfit+Z0.7)
+    Rfit = (Zfit-Z0)/(Zfit+Z0)
     Znum = Z0*(1+S11)/(1-S11)
     plt.plot(f/1e9, Rfit.real, "r-", label="Re(Rfit)")
     plt.plot(f/1e9, Rfit.imag, "b-", label="Im(Rfit)")
