@@ -2,12 +2,14 @@ import os
 import re
 
 def fileList(source, beginswith, endswith):
-    """ Retrieve files residing in a certain folder which 
+    """ Retrieve files residing in a given source folder which 
         have certain pre-/suffixes
         Takes:
             - source (string): the root directory for treeing
-            - beginswith (string): a string desired files begin with
-            - endswith (string): a string desired files end with
+            - beginswith (string): a string holding the prefix of 
+              the desired filenames
+            - endswith (string): a string holding the postfix of
+              the desired filenames
         Returns:
             a list of all full paths to the found files
     """
