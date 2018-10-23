@@ -44,6 +44,30 @@ def find_minima(R, f, bound, widths=[50]):
     result_list[1:,0] = result_list[0:-1,2]
     return result_list
 
+def find_minima2(R, f, bound, widths=[50], threshold=0.1):
+    """ Find all indices i for which R[i], corresponding to the frequency
+        f[i] in f, meets: R[i] < bound.
+        Takes:
+            - R (1d np.ndarray of floats): reflection coefficient for varying frequency
+            - f (1d np.ndarray of floats): frequencies, same R.shape == f.shape
+            - bound (float): bound allowing only minima a frequencies f[i] where
+                             R[i] < bound.
+        Returns:
+            - 2d np.ndarray with shape (N, 3), where N is the number of found minima and
+              each line L corresponds to start index of the convex interval (L[0]), the
+              index where the minimum resides (L[1]) and the maximum index of the convex
+              interval (L[2]).
+    """
+    indices = signal.find_peaks(1/R, height=bound, threshold=threshold)[0]
+    w = np.where(R[indices] < bound)
+    IDX_cand = indices[w]
+    result_list = np.zeros((len(IDX_cand),3),dtype=np.int)
+    result_list[:,1] = IDX_cand
+    result_list[-1,-1] = -1
+    result_list[0:-1,2] = (result_list[1:,1] + result_list[0:-1,1])//2
+    result_list[1:,0] = result_list[0:-1,2]
+    return result_list
+
 def fit_func(coeffs, f, D, eps, tand):
     """ A Simple RLC series circuit in
         parallel to the analytically known

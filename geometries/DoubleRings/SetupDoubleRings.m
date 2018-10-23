@@ -4,7 +4,7 @@ addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
 % setup the system paths
-Paths.SimPath = ['DoubleRings/UCDim_' num2str(UCDim) '/R1_' num2str(R1) '/R2_' num2str(R2)];
+Paths.SimPath = ['DoubleRings/UCDim_' num2str(UCDim) '/lz_' num2str(lz) '/R1_' num2str(R1) '/R2_' num2str(R2)];
 Paths.SimCSX = 'DoubleRings_geometry.xml';
 Paths = configureSystemPaths(Paths, node);
 addpath([Paths.ResultBasePath 'libraries/']);
@@ -13,7 +13,7 @@ sim_setup.Paths = Paths;
 %-----------------system path setup END---------------------------------------|
 sim_setup.Paths = Paths;
 sim_setup.FDTD.Write = 'True';
-sim_setup.FDTD.numThreads = 5;
+sim_setup.FDTD.numThreads = 4;
 sim_setup.FDTD.Run = 'True';
 sim_setup.FDTD.fstart = 2e9;
 sim_setup.FDTD.fstop = 40e9;
@@ -43,8 +43,8 @@ sim_setup.PP = PP;
 % Define the materials which are used:
 mFR4.Name = 'FR4';
 mFR4.Type = 'Material';
-mFR4.Properties.Kappa = 0.05;
-mFR4.Properties.Epsilon = 4.6;
+mFR4.Properties.Kappa = kappa;
+mFR4.Properties.Epsilon = eps;
 mCuSheet.Name = 'CuSheet';
 mCuSheet.Type = 'ConductingSheet';
 mCuSheet.Properties.Thickness = 35e-6;
@@ -86,7 +86,7 @@ fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 oFSS1.Name = 'outer_ring';
 oFSS1.MName = 'CuSheet';
 oFSS1.Type = 'Polygon';
-oFSS1.Thickness = 0.;
+oFSS1.Thickness = 0;
 oFSS1.Center = [0,0];
 oFSS1.Prio = 4;
 oFR4.Name = 'FR4Substrate';

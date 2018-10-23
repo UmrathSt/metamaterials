@@ -2,7 +2,7 @@ clc;
 clear;
 
 kappa = 0.05;
-eps = 4.6;
+eps = 4.2;
 lz = 2;
 UCDim = 20;
 L = linspace(3, 3.95, 20);
@@ -20,11 +20,8 @@ R1 = 9.8;
 w1 = 1.5;
 R2 = 5.1;
 w2 = 0.5;
-for R1 = [9.8];
-    for R2 = [5.1];
-        for lz = [1, 3];
+lz = 2;
+for R1 = [9.8,9.5, 9, 8.5, 8, 7.5, 7, 6.5,6];
             SetupDoubleRings(type_of_sim, UCDim, lz, R1, w1, R2, w2, eps, kappa,ZMESHRES=40,MESHRES=80);
-            SetupDoubleRings(type_of_sim, UCDim, lz, 0, 0, R2, w2, eps, kappa,ZMESHRES=40,MESHRES=80);
-            SetupDoubleRings(type_of_sim, UCDim, lz, R1, w1, 0, 0, eps, kappa,ZMESHRES=40,MESHRES=80);
-end; end; end;
+end;
 
