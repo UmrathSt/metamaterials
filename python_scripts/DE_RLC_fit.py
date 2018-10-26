@@ -2,7 +2,7 @@ import numpy as np
 import sys
 hdir = "/home/stefan_dlr/Arbeit/openEMS/metamaterials/python_scripts"
 sys.path.append(hdir)
-from tl_fit import Rresiduals, Zresiduals, fit_func
+from equ_cir_fitting import Rresiduals, Zresiduals, fit_func
 from scipy.optimize import differential_evolution
 from matplotlib import pyplot as plt
 import argparse
@@ -40,7 +40,7 @@ def return_solution(fname, fmin, fmax, popsize, maxiter, plot, eps=4.6, tand=0.0
     
     
     sumRresiduals = lambda x: Zresiduals(x, Rnum[I:J], f[I:J], D, eps, tand).sum()
-    solution = differential_evolution(sumRresiduals, bounds=[(0,1e0),(1e-13,1e-9),(1e-14, 1e-10)],
+    solution = differential_evolution(sumRresiduals, bounds=[(5,10),(1e-10,1e-8),(1e-13, 1e-12)],
                                         popsize=args.popsize,maxiter=args.maxiter)
     Znum = 376*(1+Rnum)/(1-Rnum)
     Zfit = fit_func(solution.x, f, D, eps, tand)

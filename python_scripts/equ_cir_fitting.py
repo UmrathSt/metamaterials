@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser.add_argument("--tand", dest="tand",type=float)
     parser.add_argument("--fmin", dest="fmin", type=float)
     parser.add_argument("--fmax", dest="fmax", type=float)
-    
+    parser.add_argument("--plot", dest="plot", type=bool,default=False)
     args = parser.parse_args()
 
 Z0 = 273.73 # vacuum impedance
@@ -76,7 +76,7 @@ def fit_func(coeffs, f, D, eps, tand):
     """
     w = 2*np.pi*f
     epsilon = eps*(1+tand*1j)
-    Zd = -Z0j/np.sqrt(epsilon)*np.tan(w/3e8*np.sqrt(epsilon)*D)
+    Zd = -Z0*1j/np.sqrt(epsilon)*np.tan(w/3e8*np.sqrt(epsilon)*D)
     lendiv3, lenmod3 = divmod(len(coeffs),3)
     assert(lenmod3 == 0)
     Zges = Zd
@@ -114,17 +114,19 @@ if __name__ == "__main__":
     Zfit = fit_func(coeffs, f, args.D, args.eps, args.tand)
     Rfit = (Zfit-Z0)/(Zfit+Z0)
     Znum = Z0*(1+S11)/(1-S11)
-    plt.plot(f/1e9, Rfit.real, "r-", label="Re(Rfit)")
-    plt.plot(f/1e9, Rfit.imag, "b-", label="Im(Rfit)")
-    plt.plot(f/1e9, S11.real, "m--", label="Re(Rnum)")
-    plt.plot(f/1e9, S11.imag, "c--", label="Im(Rnum)")
-    plt.plot(f/1e9, np.abs(S11), "k-", label="Abs(Rnum")
-    plt.plot(f/1e9, np.abs(Rfit), "k--", label="Abs(Rfit")
-    plt.legend(loc="best").draw_frame(False)
-    plt.show()
-    plt.plot(f/1e9, Zfit.real, "r-", label="Re(Zfit)")
-    plt.plot(f/1e9, Zfit.imag, "b-", label="Im(Zfit)")
-    plt.plot(f/1e9, Znum.real, "m--", label="Re(Znum)")
-    plt.plot(f/1e9, Znum.imag, "c--", label="Im(Znum)")
-    plt.legend(loc="best").draw_frame(False)
-    plt.show()
+    print("args.plot: ", args.plot)
+    if args.plot:
+        plt.plot(f/1e9, Rfit.real, "r-", label="Re(Rfit)")
+        plt.plot(f/1e9, Rfit.imag, "b-", label="Im(Rfit)")
+        plt.plot(f/1e9, S11.real, "m--", label="Re(Rnum)")
+        plt.plot(f/1e9, S11.imag, "c--", label="Im(Rnum)")
+        plt.plot(f/1e9, np.abs(S11), "k-", label="Abs(Rnum")
+        plt.plot(f/1e9, np.abs(Rfit), "k--", label="Abs(Rfit")
+        plt.legend(loc="best").draw_frame(False)
+        plt.show()
+        plt.plot(f/1e9, Zfit.real, "r-", label="Re(Zfit)")
+        plt.plot(f/1e9, Zfit.imag, "b-", label="Im(Zfit)")
+        plt.plot(f/1e9, Znum.real, "m--", label="Re(Znum)")
+        plt.plot(f/1e9, Znum.imag, "c--", label="Im(Znum)")
+        plt.legend(loc="best").draw_frame(False)
+        plt.show()
