@@ -1,11 +1,11 @@
 % Setup a dielectric FR4 slab simulation
-function SetupDoubleRings(type_of_sim, UCDim, lz, R1, w1, R2, w2, eps, kappa,ZMESHRES=40,MESHRES=140);
+function SetupDoubleSlots(type_of_sim, UCDim, lz, R1, w1, R2, w2, eps, kappa,ZMESHRES=40,MESHRES=140);
 addpath('../../libraries');
 physical_constants;
 node = uname.nodename();
 % setup the system paths
-Paths.SimPath = ['DoubleRings/UCDim_' num2str(UCDim) '/lz_' num2str(lz) '/R1_' num2str(R1) '/R2_' num2str(R2)];
-Paths.SimCSX = 'DoubleRings_geometry.xml';
+Paths.SimPath = ['DoubleSlots/UCDim_' num2str(UCDim) '/lz_' num2str(lz) '/R1_' num2str(R1) '/R2_' num2str(R2)];
+Paths.SimCSX = 'DoubleSlots_geometry.xml';
 Paths = configureSystemPaths(Paths, node);
 addpath([Paths.ResultBasePath 'libraries/']);
 Paths.ResultPath = ['Results/SParameters/' Paths.SimPath];
@@ -45,12 +45,17 @@ mFR4.Name = 'FR4';
 mFR4.Type = 'Material';
 mFR4.Properties.Kappa = kappa;
 mFR4.Properties.Epsilon = eps;
+mAir.Name = 'Air';
+mAir.Type = 'Material';
+mAir.Properties.Kappa = 0;
+mAir.Properties.Epsilon = 1
 mCuSheet.Name = 'CuSheet';
 mCuSheet.Type = 'ConductingSheet';
 mCuSheet.Properties.Thickness = 35e-6;
 mCuSheet.Properties.Kappa = 56e6;
 materials{1} = mFR4;
 materials{2} = mCuSheet;
+materials{3} = mAir;
 if strcmp(type_of_sim, 'LEFT');
     lMaterial = mFR4;
     lEpsilon = lMaterial.Properties.Epsilon;
@@ -84,11 +89,20 @@ fc = (sim_setup.FDTD.fstart+sim_setup.FDTD.fstop)/2;
 % Define the objects which are made of the defined materials
 
 oFSS1.Name = 'outer_ring';
-oFSS1.MName = 'CuSheet';
+oFSS1.MName = 'Air';
 oFSS1.Type = 'Polygon';
 oFSS1.Thickness = 0;
 oFSS1.Center = [0,0];
 oFSS1.Prio = 4;
+oCuRect.Name = 'CopperRectangle';
+oCuRect.MName = 'CuSheet';
+oCuRect.Type = 'Polygon';
+oCuRect.Thickness = 0;
+oCuRect.Center = [0,0];
+oCuRect.Prio = 3;
+RPoints(1,:) = [-UCDim/2, +UCDim/2, +UCDim/2, -UCDim/2];
+RPoints(2,:) = [+UCDim/2, +UCDim/2, -UCDim/2, -UCDim/2];
+oCuRect.Points = RPoints;
 oFR4.Name = 'FR4Substrate';
 oFR4.MName = 'FR4';
 oFR4.Type = 'Box';
@@ -116,11 +130,11 @@ oFSS2.Points = Points;
 
 layer1.Name = 'FSS';
 layer1.Thickness = 0;
-layer1.objects = {oFSS1, oFSS2};
+layer1.objects = {oFSS1, oFSS2,oCuRect};
 if R1 == 0;
-    layer1.objects = {oFSS2};
+    layer1.objects = {oFSS2,oCuRect};
 elseif R2 == 0;
-    layer1.objects = {oFSS1};
+    layer1.objects = {oFSS1,oCuRect};
 end;
 layer2.Name = 'Substrate';
 layer2.Thickness = oFR4.Thickness;

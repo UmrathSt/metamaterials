@@ -22,6 +22,7 @@ R2 = 5.1;
 w2 = 0.5;
 lz = 2;
 for R1 = [9.8];
-            SetupDoubleRings(type_of_sim, UCDim, lz, R1, w1, R2, w2, eps, kappa,ZMESHRES=40,MESHRES=80);
+    SetupDoubleRings(type_of_sim, UCDim, lz, R1, w1, R2, w2, eps, kappa,ZMESHRES=40,MESHRES=80);
+    SetupDoubleSlots(type_of_sim, UCDim, lz, R1, w1, R2, w2, eps, kappa,ZMESHRES=40,MESHRES=80);
 end;
 
