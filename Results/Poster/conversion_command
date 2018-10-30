@@ -1,0 +1,1 @@
+pdftoppm plot.pdf plot.png -png
