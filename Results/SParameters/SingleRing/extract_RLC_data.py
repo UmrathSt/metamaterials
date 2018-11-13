@@ -23,21 +23,27 @@ Z0 = 376.73
 data = np.loadtxt(args.fname, delimiter=",")
 f = data[:,0]*1e9
 Znum = data[:,1:13]-1j*data[:,13:]
-eps, tand, D = args.eps, args.tand, args.D
-I = (np.abs(f-args.fmin)).argmin()
-J = (np.abs(f-args.fmax)).argmin()
-Znum = Znum[:,0]
-sumRresiduals = lambda x: ZresidualsImp(x, Z0*Znum[I:J], f[I:J], D, eps, tand).sum()
-solution = differential_evolution(sumRresiduals, 
-        bounds=[(0.1,100),(1e-10,1e-8),(1e-14, 1e-12)],
-        popsize=args.popsize,maxiter=args.maxiter)
-print("found RLC values: ", solution.x)
-Znum = Z0*Znum
-Zfit = fit_func(solution.x, f, D, eps, tand)
-
-plt.plot(f/1e9, Zfit.real,"r-",label="Re Zfit")
-plt.plot(f/1e9, Zfit.imag,"b-",label="Im Zfit")
-plt.plot(f/1e9, Znum.real,"m--",label="Re Znum")
-plt.plot(f/1e9, Znum.imag,"c--",label="Im Znum")
-plt.legend(loc="best").draw_frame(False)
-plt.show()
+for idx in range(12):
+    ZNUM = Znum[:,idx]
+    eps, tand, D = args.eps, args.tand, args.D
+    I = (np.abs(f-args.fmin)).argmin()
+    J = (np.abs(f-args.fmax)).argmin()
+    sumRresiduals = lambda x: ZresidualsImp(x, Z0*ZNUM[I:J], f[I:J], D, eps, tand).sum()
+    solution = differential_evolution(sumRresiduals, 
+            bounds=[(0.1,100),(1e-10,1e-7),(1e-14, 1e-12)],
+            popsize=args.popsize,maxiter=args.maxiter)
+    print("found RLC values: ", solution.x)
+    ZNUM *= Z0
+    Zfit = fit_func(solution.x, f, D, eps, tand)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.set_title("theta = %i degree, R=%.3e, L=%.3e, C=%.3e" %(idx*5, *solution.x))
+    ax.plot(f/1e9, Zfit.real,"r-",label="Re Zfit")
+    ax.plot(f/1e9, Zfit.imag,"b-",label="Im Zfit")
+    ax.plot(f/1e9, ZNUM.real,"m--",label="Re Znum")
+    ax.plot(f/1e9, ZNUM.imag,"c--",label="Im Znum")
+    ax.set_xlim([args.fmin/1e9, args.fmax/1e9])
+    ax.set_xlabel("f [GHz]")
+    ax.set_ylabel("Re($Z/Z_0$), Im($Z/Z_0$)")
+    ax.legend(loc="best").draw_frame(False)
+    fig.savefig("theta_%i_degree.pdf" %(idx*5), format="pdf")
